@@ -9,20 +9,16 @@ import kotlinx.android.synthetic.main.content_hillfort_maps.*
 import org.jetbrains.anko.intentFor
 import org.wit.hillfort.helpers.readImageFromPath
 import org.wit.hillfort.main.MainApp
+import org.wit.hillfort.models.HillfortModel
+import org.wit.hillfort.views.BasePresenter
+import org.wit.hillfort.views.BaseView
 import org.wit.hillfort.views.ImageView
 
-class HillfortMapPresenter(val view: HillfortMapsView) {
+class HillfortMapPresenter(view: BaseView) : BasePresenter(view) {
 
-    var app: MainApp
-
-    init {
-        app = view.application as MainApp
-    }
-
-    fun doPopulateMap(map: GoogleMap) {
+    fun doPopulateMap(map: GoogleMap, hillforts: List<HillfortModel>) {
         map.uiSettings.setZoomControlsEnabled(true)
-        map.setOnMarkerClickListener(view)
-        app.currentUser.copy().hillforts.forEach {
+        hillforts.forEach {
             val loc = LatLng(it.lat, it.lng)
             val options = MarkerOptions().title(it.name).position(loc)
             map.addMarker(options).tag = it.id
@@ -33,14 +29,18 @@ class HillfortMapPresenter(val view: HillfortMapsView) {
     fun doMarkerSelected(marker: Marker) {
         val tag = marker.tag as Long
         val hillfort = app.users.findById(app.currentUser.copy(), tag)
-        view.currentTitle.text = hillfort!!.name
-        view.currentDescription.text = hillfort!!.description
+        view?.currentTitle?.text = hillfort!!.name
+        view?.currentDescription?.text = hillfort!!.description
         if (!hillfort.images.isEmpty()) {
-            view.imageView.setImageBitmap(readImageFromPath(view, hillfort.images[0]))
+            view?.imageView?.setImageBitmap(readImageFromPath(view!!, hillfort.images[0]))
         }
     }
 
     fun doImageClick(image: String){
-        view.startActivityForResult(view.intentFor<ImageView>().putExtra("image", image), 3)
+        view?.startActivityForResult(view!!.intentFor<ImageView>().putExtra("image", image), 3)
+    }
+
+    fun loadHillforts() {
+        view?.showHillforts(app.currentUser.hillforts)
     }
 }

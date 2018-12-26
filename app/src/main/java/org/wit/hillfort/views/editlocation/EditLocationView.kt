@@ -1,15 +1,14 @@
 package org.wit.hillfort.views.editlocation
 
-
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.Marker
 import org.wit.hillfort.R
+import org.wit.hillfort.views.BaseView
 
-class EditLocationView : AppCompatActivity(), GoogleMap.OnMarkerDragListener, GoogleMap.OnMarkerClickListener {
+class EditLocationView : BaseView(), GoogleMap.OnMarkerDragListener, GoogleMap.OnMarkerClickListener {
 
     lateinit var map: GoogleMap
     lateinit var presenter: EditLocationPresenter
@@ -23,7 +22,7 @@ class EditLocationView : AppCompatActivity(), GoogleMap.OnMarkerDragListener, Go
             map = it
             map.setOnMarkerDragListener(this)
             map.setOnMarkerClickListener(this)
-            presenter.initMap(map)
+            presenter.doConfigureMap(map)
         }
     }
 
@@ -42,5 +41,8 @@ class EditLocationView : AppCompatActivity(), GoogleMap.OnMarkerDragListener, Go
     override fun onMarkerClick(marker: Marker): Boolean {
         presenter.doUpdateMarker(marker)
         return false
+    }
+
+    override fun onHillfortImageClick(image: String) {
     }
 }
