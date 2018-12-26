@@ -55,6 +55,8 @@ class HillfortListActivity : AppCompatActivity(), HillfortListener, NavigationVi
         when (item?.itemId) {
             R.id.item_add -> startActivityForResult<HillfortActivity>(0)
 
+            R.id.item_map -> startActivityForResult<HillfortMapsActivity>(0)
+
             R.id.item_logout -> {
                 setResult(AppCompatActivity.RESULT_OK)
                 toast(R.string.logged_out)
