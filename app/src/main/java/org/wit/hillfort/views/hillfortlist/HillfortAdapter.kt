@@ -1,4 +1,4 @@
-package org.wit.hillfort.activities.hillfort
+package org.wit.hillfort.views.hillfortlist
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -56,6 +56,7 @@ class HillfortAdapter constructor(private var hillforts: List<HillfortModel>,
                 } else {
                     hillfort.visited = false
                     app.numHillfortsVisited --
+                    hillfort.dateVisited = ""
                     app.users.updateUser(app.currentUser.copy())
                 }
             }

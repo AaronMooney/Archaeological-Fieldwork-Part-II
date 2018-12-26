@@ -1,30 +1,24 @@
-package org.wit.hillfort.activities.hillfort
+package org.wit.hillfort.views.hillfort
 
 import android.content.Intent
 import android.support.v4.app.NavUtils
 import android.widget.TextView
 import org.jetbrains.anko.intentFor
 import org.wit.hillfort.R
-import org.wit.hillfort.activities.ImageView
-import org.wit.hillfort.activities.EditLocationView
+import org.wit.hillfort.views.editlocation.EditLocationView
 import org.wit.hillfort.helpers.showImagePicker
 import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.Location
 import org.wit.hillfort.models.HillfortModel
+import org.wit.hillfort.views.*
 
-class HillfortPresenter(val view: HillfortView) {
-
-    val IMAGE_REQUEST = 1
-    val IMAGE_GALLERY_REQUEST = 3
-    val LOCATION_REQUEST = 2
+class HillfortPresenter(view: BaseView) : BasePresenter(view){
 
     var hillfort = HillfortModel()
     var location = Location(52.245696, -7.139102, 15f)
-    var app: MainApp
-    var edit = false;
+    var edit = false
 
     init {
-        app = view.application as MainApp
         if (view.intent.hasExtra("hillfort_edit")) {
             edit = true
             hillfort = view.intent.extras.getParcelable<HillfortModel>("hillfort_edit")
@@ -50,48 +44,47 @@ class HillfortPresenter(val view: HillfortView) {
         if (edit) {
             app.users.updateUser(app.currentUser.copy(), hillfort)
         } else {
-            app.currentUser.hillforts.add(hillfort.copy())
+            app.currentUser.copy().hillforts.add(hillfort.copy())
             app.users.updateUser(app.currentUser.copy(), hillfort)
         }
-        view.finish()
+        view?.finish()
     }
 
     fun doCancel() {
-        view.finish()
+        view?.finish()
     }
 
     fun doDelete() {
         app.users.deleteHillfort(app.currentUser,hillfort.copy())
-        view.finish()
+        view?.finish()
     }
 
     fun doSelectImage() {
-        showImagePicker(view, IMAGE_REQUEST)
+        showImagePicker(view!!, IMAGE_REQUEST)
     }
 
     fun doUp() {
-        NavUtils.navigateUpFromSameTask(view)
+        NavUtils.navigateUpFromSameTask(view!!)
     }
 
     fun doImageClick(image: String){
-        view.startActivityForResult(view.intentFor<ImageView>().putExtra("image", image), IMAGE_GALLERY_REQUEST)
+        view?.startActivityForResult(view!!.intentFor<ImageView>().putExtra("image", image), IMAGE_GALLERY_REQUEST)
     }
 
     fun doSetLocation() {
-        if (hillfort.zoom != 0f) {
-            location.lat = hillfort.lat
-            location.lng = hillfort.lng
-            location.zoom = hillfort.zoom
+        if (edit == false) {
+            view?.navigateTo(VIEW.LOCATION, LOCATION_REQUEST, "location", location)
+        } else {
+            view?.navigateTo(VIEW.LOCATION, LOCATION_REQUEST, "location", Location(hillfort.lat, hillfort.lng, hillfort.zoom))
         }
-        view.startActivityForResult(view.intentFor<EditLocationView>().putExtra("location", location), LOCATION_REQUEST)
     }
 
-    fun doActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun doActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         when (requestCode) {
             IMAGE_REQUEST -> {
                 hillfort.images.add(data.getData().toString())
-                view.loadImages(hillfort.images)
-                view.showHillfort(hillfort)
+                view?.loadImages(hillfort.images)
+                view?.showHillfort(hillfort)
             }
             LOCATION_REQUEST -> {
                 location = data.extras.getParcelable<Location>("location")

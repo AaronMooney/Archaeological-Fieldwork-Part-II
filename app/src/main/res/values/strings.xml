@@ -17,6 +17,7 @@
     <string name="menu_deleteHillfort">Delete</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
+    <string name="menu_saveHillfort">Save</string>
     <string name="enter_hillfort_Name">Please enter a Hillfort Name</string>
     <string name="save_hillfort">Save Hillfort</string>
     <string name="select_hillfort_image">Select hillfort image</string>
@@ -42,5 +43,5 @@
     <string name="date_visited" formatted="true">Last Visited: %1$s%%</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-    <string name="title_activity_hillfort_maps">HillfortMapsActivity</string>
+    <string name="title_activity_hillfort_maps">Map of All Hillforts</string>
 </resources>

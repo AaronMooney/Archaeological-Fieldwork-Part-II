@@ -101,6 +101,11 @@ class UserJSONStore : UserStore, AnkoLogger {
         serialize()
     }
 
+    override fun findById(user: UserModel, id :Long) : HillfortModel? {
+        val foundPlacemark: HillfortModel? = user.hillforts.find { it.id == id }
+        return foundPlacemark
+    }
+
     private fun serialize() {
         val jsonString = gsonBuilderUser.toJson(users, listTypeUser)
         write(context, JSON_FILE_USERS, jsonString)

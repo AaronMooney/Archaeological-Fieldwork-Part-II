@@ -1,4 +1,4 @@
-package org.wit.hillfort.activities
+package org.wit.hillfort.views
 
 import android.os.Bundle
 import android.support.v4.app.NavUtils

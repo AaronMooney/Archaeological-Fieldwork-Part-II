@@ -1,4 +1,4 @@
-package org.wit.hillfort.activities.hillfort
+package org.wit.hillfort.views.hillfort
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -10,11 +10,11 @@ import kotlinx.android.synthetic.main.activity_hillfort.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.toast
 import org.wit.hillfort.R
-import org.wit.hillfort.activities.ImageGalleryAdapter
-import org.wit.hillfort.activities.ImageListener
+import org.wit.hillfort.views.ImageListener
 import org.wit.hillfort.models.HillfortModel
+import org.wit.hillfort.views.BaseView
 
-class HillfortView : AppCompatActivity(), AnkoLogger, ImageListener {
+class HillfortView : BaseView(), AnkoLogger, ImageListener {
 
     lateinit var presenter: HillfortPresenter
     var hillfort = HillfortModel()
@@ -22,22 +22,12 @@ class HillfortView : AppCompatActivity(), AnkoLogger, ImageListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hillfort)
-        toolbarAdd.title = title
-        setSupportActionBar(toolbarAdd)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        init(toolbarAdd)
 
-        presenter = HillfortPresenter(this)
+        presenter =  initPresenter(HillfortPresenter(this)) as HillfortPresenter
 
         val layoutManager = GridLayoutManager(this,2)
         imageGallery.layoutManager = layoutManager
-
-        btnAdd.setOnClickListener {
-            if (hillfortName.text.toString().isEmpty()) {
-                toast(R.string.enter_hillfort_Name)
-            } else {
-                presenter.doAddOrSave(hillfortName.text.toString(), description.text.toString(), additionalNotes.text.toString())
-            }
-        }
 
         chooseImage.setOnClickListener {
             presenter.doSelectImage()
@@ -48,11 +38,10 @@ class HillfortView : AppCompatActivity(), AnkoLogger, ImageListener {
         }
     }
 
-    fun showHillfort(hillfort: HillfortModel) {
+    override fun showHillfort(hillfort: HillfortModel) {
         hillfortName.setText(hillfort.name)
         description.setText(hillfort.description)
         loadImages(hillfort.images)
-        btnAdd.setText(R.string.save_hillfort)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -69,6 +58,17 @@ class HillfortView : AppCompatActivity(), AnkoLogger, ImageListener {
             R.id.item_delete -> {
                 presenter.doDelete()
                 finish()
+            }
+            R.id.item_save -> {
+                if (hillfortName.text.toString().isEmpty()) {
+                    toast(R.string.enter_hillfort_Name)
+                } else {
+                    presenter.doAddOrSave(
+                        hillfortName.text.toString(),
+                        description.text.toString(),
+                        additionalNotes.text.toString()
+                    )
+                }
             }
             android.R.id.home -> {
                 presenter.doUp()
@@ -87,10 +87,5 @@ class HillfortView : AppCompatActivity(), AnkoLogger, ImageListener {
 
     override fun onHillfortImageClick(image: String) {
         presenter.doImageClick(image)
-    }
-
-    fun loadImages(images: List<String>) {
-        imageGallery.adapter = ImageGalleryAdapter(images, this)
-        imageGallery.adapter?.notifyDataSetChanged()
     }
 }

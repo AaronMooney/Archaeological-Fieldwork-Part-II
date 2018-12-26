@@ -1,4 +1,4 @@
-package org.wit.hillfort.activities
+package org.wit.hillfort.views
 
 import android.app.Activity
 import android.os.Bundle

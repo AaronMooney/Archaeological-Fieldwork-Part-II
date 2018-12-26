@@ -1,4 +1,4 @@
-package org.wit.hillfort.activities
+package org.wit.hillfort.views
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -6,7 +6,7 @@ import kotlinx.android.synthetic.main.activity_user_welcome.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 import org.wit.hillfort.R
-import org.wit.hillfort.activities.hillfort.HillfortListView
+import org.wit.hillfort.views.hillfortlist.HillfortListView
 import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.UserModel
 import org.wit.hillfort.helpers.hashString

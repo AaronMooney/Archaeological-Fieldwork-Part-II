@@ -1,4 +1,4 @@
-package org.wit.hillfort.activities
+package org.wit.hillfort.views.editlocation
 
 
 import android.support.v7.app.AppCompatActivity

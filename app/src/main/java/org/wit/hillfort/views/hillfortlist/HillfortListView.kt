@@ -1,4 +1,4 @@
-package org.wit.hillfort.activities.hillfort
+package org.wit.hillfort.views.hillfortlist
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,8 +12,9 @@ import kotlinx.android.synthetic.main.activity_hillfort_list.*
 import org.wit.hillfort.R
 import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.HillfortModel
+import org.wit.hillfort.views.BaseView
 
-class HillfortListView : AppCompatActivity(), HillfortListener, NavigationView.OnNavigationItemSelectedListener{
+class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigationItemSelectedListener{
 
     lateinit var app: MainApp
     lateinit var presenter: HillfortListPresenter
@@ -22,22 +23,21 @@ class HillfortListView : AppCompatActivity(), HillfortListener, NavigationView.O
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        app = application as MainApp
         setContentView(R.layout.activity_hillfort_list)
-        toolbarMain.title = title
-        setSupportActionBar(toolbarMain)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        init(toolbarMain)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.abc_ic_menu_overflow_material)
+
+        app = application as MainApp
 
         drawerLayout = findViewById(R.id.drawer)
         toggleDrawer = ActionBarDrawerToggle(this,drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggleDrawer)
         toggleDrawer.syncState()
 
-        var navigationView : NavigationView = findViewById(R.id.navigation_view)
+        val navigationView : NavigationView = findViewById(R.id.navigation_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        presenter = HillfortListPresenter(this)
+        presenter = initPresenter(HillfortListPresenter(this)) as HillfortListPresenter
 
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
@@ -82,17 +82,16 @@ class HillfortListView : AppCompatActivity(), HillfortListener, NavigationView.O
         presenter.doEditHillfort(hillfort)
     }
 
+    override fun onHillfortImageClick(image: String) {
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         loadHillforts()
         super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun loadHillforts() {
-        showHillforts(app.currentUser.hillforts)
-    }
-
-    fun showHillforts (hillforts: List<HillfortModel>) {
-        recyclerView.adapter = HillfortAdapter(hillforts, this, app)
+        recyclerView.adapter = HillfortAdapter(app.currentUser.copy().hillforts, this, app)
         recyclerView.adapter?.notifyDataSetChanged()
     }
 }

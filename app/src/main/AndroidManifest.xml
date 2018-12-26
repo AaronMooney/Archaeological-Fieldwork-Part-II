@@ -13,7 +13,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
-                android:name=".activities.SplashActivity"
+                android:name=".views.SplashView"
                 android:noHistory="true"
                 android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
@@ -23,22 +23,22 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".activities.HillfortActivity"
-                android:parentActivityName=".activities.HillfortListActivity">
+                android:name=".views.hillfort.HillfortView"
+                android:parentActivityName=".views.hillfortlist.HillfortListView">
         </activity>
-        <activity android:name=".activities.HillfortListActivity">
-        </activity>
-        <activity
-                android:name=".activities.ImageActivity"
-                android:parentActivityName=".activities.HillfortActivity">
-        </activity>
-        <activity android:name=".activities.UserWelcomeActivity">
-        </activity>
-        <activity android:name=".activities.UserSignupActivity">
+        <activity android:name=".views.hillfortlist.HillfortListView">
         </activity>
         <activity
-                android:name=".activities.SettingsActivity"
-                android:parentActivityName=".activities.HillfortListActivity">
+                android:name=".views.ImageView"
+                android:parentActivityName=".views.hillfort.HillfortView">
+        </activity>
+        <activity android:name=".views.UserWelcomeView">
+        </activity>
+        <activity android:name=".views.UserSignupView">
+        </activity>
+        <activity
+                android:name=".views.SettingsView"
+                android:parentActivityName=".views.hillfortlist.HillfortListView">
         </activity>
 
         <meta-data
@@ -46,12 +46,12 @@
                 android:value="@string/google_maps_key"/>
 
         <activity
-                android:name=".activities.MapsActivity"
+                android:name=".views.editlocation.EditLocationView"
                 android:label="@string/title_activity_maps"
-                android:parentActivityName=".activities.HillfortActivity">
+                android:parentActivityName=".views.hillfort.HillfortView">
         </activity>
         <activity
-                android:name=".activities.HillfortMapsActivity"
+                android:name=".views.map.HillfortMapsView"
                 android:label="@string/title_activity_hillfort_maps"
                 android:theme="@style/AppTheme">
         </activity>
