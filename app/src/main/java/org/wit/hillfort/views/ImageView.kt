@@ -11,7 +11,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import org.wit.hillfort.R
 
-class ImageActivity : AppCompatActivity() {
+class ImageView : AppCompatActivity() {
 
     lateinit var imageView: ImageView
     lateinit var hillfortImage: String

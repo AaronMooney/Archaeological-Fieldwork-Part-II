@@ -18,7 +18,7 @@ import android.widget.TextView
 import org.jetbrains.anko.contentView
 
 
-class SettingsActivity: AppCompatActivity(), AnkoLogger {
+class SettingsView: AppCompatActivity(), AnkoLogger {
     lateinit var app: MainApp
 
     override fun onCreate(savedInstanceState: Bundle?) {

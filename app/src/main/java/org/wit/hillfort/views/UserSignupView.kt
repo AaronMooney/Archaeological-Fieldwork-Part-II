@@ -10,7 +10,7 @@ import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.UserModel
 import org.wit.hillfort.helpers.hashString
 
-class UserSignupActivity : AppCompatActivity(){
+class UserSignupView : AppCompatActivity(){
 
     var user = UserModel()
     lateinit var app: MainApp

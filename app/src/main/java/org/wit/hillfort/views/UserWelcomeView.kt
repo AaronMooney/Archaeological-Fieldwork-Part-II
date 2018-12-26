@@ -6,11 +6,12 @@ import kotlinx.android.synthetic.main.activity_user_welcome.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 import org.wit.hillfort.R
+import org.wit.hillfort.activities.hillfort.HillfortListView
 import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.UserModel
 import org.wit.hillfort.helpers.hashString
 
-class UserWelcomeActivity : AppCompatActivity(){
+class UserWelcomeView : AppCompatActivity(){
 
     lateinit var app: MainApp
 
@@ -20,7 +21,7 @@ class UserWelcomeActivity : AppCompatActivity(){
         app = application as MainApp
 
         btnUserCreateAccount.setOnClickListener{
-            startActivityForResult(intentFor<UserSignupActivity>(),0)
+            startActivityForResult(intentFor<UserSignupView>(),0)
         }
 
         btnUserLogin.setOnClickListener{
@@ -50,7 +51,7 @@ class UserWelcomeActivity : AppCompatActivity(){
         clear()
         toast(R.string.login_success)
         app.currentUser = userExists
-        startActivityForResult(intentFor<HillfortListActivity>(), 0)
+        startActivityForResult(intentFor<HillfortListView>(), 0)
     }
 
     fun clear(){

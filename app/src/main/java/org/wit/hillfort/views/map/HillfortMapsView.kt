@@ -1,4 +1,4 @@
-package org.wit.hillfort.activities
+package org.wit.hillfort.views.hillfort
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.content_hillfort_maps.*
 import org.wit.hillfort.helpers.readImageFromPath
 import org.wit.hillfort.main.MainApp
 
-class HillfortMapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListener {
+class HillfortMapsView : AppCompatActivity(), GoogleMap.OnMarkerClickListener {
 
     lateinit var map: GoogleMap
     lateinit var app: MainApp
@@ -73,7 +73,7 @@ class HillfortMapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListene
         currentTitle.text = hillfort!!.name
         currentDescription.text = hillfort!!.description
         if (!hillfort.images.isEmpty()) {
-            imageView.setImageBitmap(readImageFromPath(this@HillfortMapsActivity, hillfort.images[0]))
+            imageView.setImageBitmap(readImageFromPath(this@HillfortMapsView, hillfort.images[0]))
         }
         return true
     }

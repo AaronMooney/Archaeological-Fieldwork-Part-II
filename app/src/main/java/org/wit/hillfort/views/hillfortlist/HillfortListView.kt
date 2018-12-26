@@ -1,4 +1,4 @@
-package org.wit.hillfort.activities
+package org.wit.hillfort.activities.hillfort
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,41 +8,41 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
-import android.widget.CheckBox
 import kotlinx.android.synthetic.main.activity_hillfort_list.*
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.toast
 import org.wit.hillfort.R
-import org.wit.hillfort.helpers.hashString
 import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.HillfortModel
 
-class HillfortListActivity : AppCompatActivity(), HillfortListener, NavigationView.OnNavigationItemSelectedListener{
+class HillfortListView : AppCompatActivity(), HillfortListener, NavigationView.OnNavigationItemSelectedListener{
 
-    lateinit var app:MainApp
+    lateinit var app: MainApp
+    lateinit var presenter: HillfortListPresenter
     lateinit var drawerLayout: DrawerLayout
     lateinit var toggleDrawer: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_hillfort_list)
         app = application as MainApp
-        drawerLayout = findViewById(R.id.drawer)
-        toggleDrawer = ActionBarDrawerToggle(this,drawerLayout, R.string.open, R.string.close)
-        drawerLayout.addDrawerListener(toggleDrawer)
-        toggleDrawer.syncState()
-
+        setContentView(R.layout.activity_hillfort_list)
         toolbarMain.title = title
         setSupportActionBar(toolbarMain)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.abc_ic_menu_overflow_material)
 
+        drawerLayout = findViewById(R.id.drawer)
+        toggleDrawer = ActionBarDrawerToggle(this,drawerLayout, R.string.open, R.string.close)
+        drawerLayout.addDrawerListener(toggleDrawer)
+        toggleDrawer.syncState()
+
         var navigationView : NavigationView = findViewById(R.id.navigation_view)
         navigationView.setNavigationItemSelectedListener(this)
 
+        presenter = HillfortListPresenter(this)
+
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = HillfortAdapter(presenter.getHillforts(), this, app)
+        recyclerView.adapter?.notifyDataSetChanged()
         loadHillforts()
     }
 
@@ -53,19 +53,13 @@ class HillfortListActivity : AppCompatActivity(), HillfortListener, NavigationVi
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.item_add -> startActivityForResult<HillfortActivity>(0)
+            R.id.item_add -> presenter.doAddHillfort()
 
-            R.id.item_map -> startActivityForResult<HillfortMapsActivity>(0)
+            R.id.item_map -> presenter.doShowHillfortsMap()
 
-            R.id.item_logout -> {
-                setResult(AppCompatActivity.RESULT_OK)
-                toast(R.string.logged_out)
-                finish()
-            }
+            R.id.item_logout -> presenter.doLogout()
 
-            R.id.item_settings -> {
-                startActivityForResult<SettingsActivity>(0)
-            }
+            R.id.item_settings -> presenter.doShowSettings()
         }
         if (toggleDrawer.onOptionsItemSelected(item)){
             return true
@@ -75,23 +69,17 @@ class HillfortListActivity : AppCompatActivity(), HillfortListener, NavigationVi
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_add -> startActivityForResult<HillfortActivity>(0)
+            R.id.nav_add -> presenter.doAddHillfort()
 
-            R.id.nav_settings -> {
-                startActivityForResult<SettingsActivity>(0)
-            }
+            R.id.nav_settings -> presenter.doShowSettings()
 
-            R.id.nav_logout -> {
-                setResult(AppCompatActivity.RESULT_OK)
-                toast(R.string.logged_out)
-                finish()
-            }
+            R.id.nav_logout -> presenter.doLogout()
         }
         return false
     }
 
     override fun onHillfortClick(hillfort: HillfortModel) {
-        startActivityForResult(intentFor<HillfortActivity>().putExtra("hillfort_edit", hillfort), 0)
+        presenter.doEditHillfort(hillfort)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
