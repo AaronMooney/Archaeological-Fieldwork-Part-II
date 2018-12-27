@@ -2,11 +2,11 @@ package org.wit.hillfort.views.hillfortlist
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.NavigationView
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.navigation.NavigationView
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.*
 import kotlinx.android.synthetic.main.activity_hillfort_list.*
 import org.wit.hillfort.R
@@ -18,7 +18,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
 
     lateinit var app: MainApp
     lateinit var presenter: HillfortListPresenter
-    lateinit var drawerLayout: DrawerLayout
+    lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
     lateinit var toggleDrawer: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +39,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
 
         presenter = initPresenter(HillfortListPresenter(this)) as HillfortListPresenter
 
-        val layoutManager = LinearLayoutManager(this)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = HillfortAdapter(presenter.getHillforts(), this, app)
         recyclerView.adapter?.notifyDataSetChanged()

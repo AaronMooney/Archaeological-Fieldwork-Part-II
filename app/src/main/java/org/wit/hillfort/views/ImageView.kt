@@ -3,8 +3,8 @@ package org.wit.hillfort.views
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.graphics.Palette
+import androidx.appcompat.app.AppCompatActivity
+import androidx.palette.graphics.Palette
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.squareup.picasso.Callback
@@ -36,7 +36,7 @@ class ImageView : AppCompatActivity() {
 
                 override fun onSuccess() {
                     val bitmap = (imageView.drawable as BitmapDrawable).bitmap
-                    onPalette(Palette.from(bitmap).generate())
+                    onPalette(androidx.palette.graphics.Palette.from(bitmap).generate())
                 }
 
                 override fun onError(e: Exception?) {
@@ -44,7 +44,7 @@ class ImageView : AppCompatActivity() {
             })
     }
 
-    fun onPalette(palette: Palette?) {
+    fun onPalette(palette: androidx.palette.graphics.Palette?) {
         if (null != palette) {
             val parent = imageView.parent.parent as ViewGroup
             parent.setBackgroundColor(palette.getDarkVibrantColor(Color.GRAY))

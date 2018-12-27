@@ -1,6 +1,6 @@
 package org.wit.hillfort.views.hillfortlist
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +12,14 @@ import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.HillfortModel
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 interface HillfortListener {
     fun onHillfortClick(hillfort: HillfortModel)
 }
 
-class HillfortAdapter constructor(private var hillforts: List<HillfortModel>,
-                                  private val listener: HillfortListener, var app: MainApp) : RecyclerView.Adapter<HillfortAdapter.MainHolder>() {
+class HillfortAdapter constructor(private var hillforts: ArrayList<HillfortModel>,
+                                  private val listener: HillfortListener, var app: MainApp) : androidx.recyclerview.widget.RecyclerView.Adapter<HillfortAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         return MainHolder(
@@ -37,7 +38,7 @@ class HillfortAdapter constructor(private var hillforts: List<HillfortModel>,
 
     override fun getItemCount(): Int = hillforts.size
 
-    class MainHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class MainHolder constructor(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         fun bind(hillfort: HillfortModel, listener : HillfortListener, app:MainApp) {
             itemView.hillfortName.text = hillfort.name
             itemView.description.text = hillfort.description

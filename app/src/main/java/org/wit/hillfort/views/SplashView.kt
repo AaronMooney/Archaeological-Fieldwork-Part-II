@@ -1,7 +1,7 @@
 package org.wit.hillfort.views
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import org.jetbrains.anko.intentFor
 import org.wit.hillfort.R
 import java.lang.Exception
