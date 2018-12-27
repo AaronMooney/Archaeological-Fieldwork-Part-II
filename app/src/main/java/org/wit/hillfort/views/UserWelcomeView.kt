@@ -51,6 +51,7 @@ class UserWelcomeView : AppCompatActivity(){
         clear()
         toast(R.string.login_success)
         app.currentUser = userExists
+        app.users.updateUser(app.currentUser)
         startActivityForResult(intentFor<HillfortListView>(), 0)
     }
 

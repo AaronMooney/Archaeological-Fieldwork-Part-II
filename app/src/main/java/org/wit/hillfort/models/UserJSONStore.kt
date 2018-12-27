@@ -89,6 +89,12 @@ class UserJSONStore : UserStore, AnkoLogger {
             foundUser.hillforts = user.hillforts
             serialize()
         }
+        user.numVisited = 0
+        user.hillforts.forEach {
+            if (it.visited){
+                user.numVisited ++
+            }
+        }
     }
 
     override fun deleteUser(user: UserModel) {

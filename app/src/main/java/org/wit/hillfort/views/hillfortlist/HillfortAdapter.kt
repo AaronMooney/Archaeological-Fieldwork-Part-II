@@ -50,13 +50,13 @@ class HillfortAdapter constructor(private var hillforts: ArrayList<HillfortModel
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 if (checkBox.isChecked){
                     hillfort.visited = true
-                    app.numHillfortsVisited ++
+                    app.currentUser.numVisited ++
                     val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                     hillfort.dateVisited = date
                     app.users.updateUser(app.currentUser.copy())
                 } else {
                     hillfort.visited = false
-                    app.numHillfortsVisited --
+                    app.currentUser.numVisited --
                     hillfort.dateVisited = ""
                     app.users.updateUser(app.currentUser.copy())
                 }
