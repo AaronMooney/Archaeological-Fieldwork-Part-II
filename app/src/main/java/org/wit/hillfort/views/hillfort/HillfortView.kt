@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import com.google.android.gms.maps.GoogleMap
 import kotlinx.android.synthetic.main.activity_hillfort.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.toast
@@ -18,11 +19,12 @@ class HillfortView : BaseView(), AnkoLogger, ImageListener {
 
     lateinit var presenter: HillfortPresenter
     var hillfort = HillfortModel()
+    lateinit var map: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hillfort)
-        init(toolbarAdd)
+        init(toolbarAdd, true)
 
         presenter =  initPresenter(HillfortPresenter(this)) as HillfortPresenter
 
@@ -33,8 +35,12 @@ class HillfortView : BaseView(), AnkoLogger, ImageListener {
             presenter.doSelectImage()
         }
 
-        placemarkLocation.setOnClickListener {
-            presenter.doSetLocation()
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync {
+            presenter.doConfigureMap(it)
+            it.setOnMapClickListener {
+                presenter.doSetLocation()
+            }
         }
     }
 
@@ -42,6 +48,8 @@ class HillfortView : BaseView(), AnkoLogger, ImageListener {
         hillfortName.setText(hillfort.name)
         description.setText(hillfort.description)
         loadImages(hillfort.images)
+        lat.setText("%.6f".format(hillfort.lat))
+        lng.setText("%.6f".format(hillfort.lng))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -87,5 +95,11 @@ class HillfortView : BaseView(), AnkoLogger, ImageListener {
 
     override fun onHillfortImageClick(image: String) {
         presenter.doImageClick(image)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+        presenter.doResartLocationUpdates()
     }
 }
