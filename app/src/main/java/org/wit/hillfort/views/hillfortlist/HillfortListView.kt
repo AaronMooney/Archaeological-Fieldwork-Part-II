@@ -24,7 +24,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hillfort_list)
-        init(toolbarMain)
+        init(toolbarMain, false)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.abc_ic_menu_overflow_material)
 
         app = application as MainApp

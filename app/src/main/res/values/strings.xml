@@ -44,4 +44,7 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="title_activity_hillfort_maps">Map of All Hillforts</string>
+    <string name="title_activity_hillfort_list">Hillforts</string>
+    <string name="title_activity_hillfort">Hillforts</string>
+    <string name="title_activity_edit_location">Hillforts</string>
 </resources>

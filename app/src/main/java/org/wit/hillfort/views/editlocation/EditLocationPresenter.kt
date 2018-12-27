@@ -30,10 +30,9 @@ class EditLocationPresenter(view: BaseView) : BasePresenter(view) {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, location.zoom))
     }
 
-    fun doUpdateLocation(lat: Double, lng: Double, zoom: Float) {
+    fun doUpdateLocation(lat: Double, lng: Double) {
         location.lat = lat
         location.lng = lng
-        location.zoom = zoom
     }
 
     fun doOnBackPressed() {
@@ -47,4 +46,12 @@ class EditLocationPresenter(view: BaseView) : BasePresenter(view) {
         val loc = LatLng(location.lat, location.lng)
         marker.setSnippet("GPS : " + loc.toString())
     }
+
+    fun doSave() {
+        val resultIntent = Intent()
+        resultIntent.putExtra("location", location)
+        view?.setResult(0, resultIntent)
+        view?.finish()
+    }
+
 }
