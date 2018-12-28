@@ -1,4 +1,4 @@
-package org.wit.hillfort.views
+package org.wit.hillfort.views.settings
 
 import android.os.Bundle
 import androidx.core.app.NavUtils
@@ -16,6 +16,8 @@ import org.wit.hillfort.main.MainApp
 import android.widget.EditText
 import android.widget.TextView
 import org.jetbrains.anko.contentView
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 
 
 class SettingsView: AppCompatActivity(), AnkoLogger {
@@ -36,17 +38,17 @@ class SettingsView: AppCompatActivity(), AnkoLogger {
         val totalHillforts :TextView = findViewById(R.id.totalHillforts)
         val numHillfortsVisited: TextView = findViewById(R.id.numHillfortsVisited)
 
-        val userName = java.lang.String.format(resources.getString(R.string.current_user), app.currentUser.name)
-        val userEmail = java.lang.String.format(resources.getString(R.string.current_user_email), app.currentUser.email)
-        val totalHillfortsText = java.lang.String.format(resources.getString(R.string.total_hillforts), app.currentUser.hillforts.size.toString())
-        val numHillfortsVisitedText = java.lang.String.format(resources.getString(R.string.number_visited), app.currentUser.numVisited.toString())
+//        val userName = java.lang.String.format(resources.getString(R.string.current_user), app.currentUser.name)
+//        val userEmail = java.lang.String.format(resources.getString(R.string.current_user_email), app.currentUser.email)
+//        val totalHillfortsText = java.lang.String.format(resources.getString(R.string.total_hillforts), app.currentUser.hillforts.size.toString())
+//        val numHillfortsVisitedText = java.lang.String.format(resources.getString(R.string.number_visited), app.currentUser.numVisited.toString())
 
-        currentUserName.text = userName.replace("%","")
-        currentUserEmail.text = userEmail.replace("%", "")
-        totalHillforts.text = totalHillfortsText.replace("%", "")
-        numHillfortsVisited.text = numHillfortsVisitedText.replace("%", "")
+//        currentUserName.text = userName.replace("%","")
+//        currentUserEmail.text = userEmail.replace("%", "")
+//        totalHillforts.text = totalHillfortsText.replace("%", "")
+//        numHillfortsVisited.text = numHillfortsVisitedText.replace("%", "")
         btnChangePassword.setOnClickListener {
-            showDialog(contentView!!)
+//            showDialog(contentView!!)
         }
     }
 
@@ -72,24 +74,26 @@ class SettingsView: AppCompatActivity(), AnkoLogger {
         return super.onOptionsItemSelected(item)
     }
 
-    fun showDialog(view: View) {
-        val builder = AlertDialog.Builder(this)
-        val inflater = layoutInflater
-        builder.setTitle(R.string.settings_change_password)
-        val dialogLayout = inflater.inflate(R.layout.dialog_settings, null)
-        val newUserPass  = dialogLayout.findViewById<EditText>(R.id.newUserPassword)
-        val newUserPassConfirm  = dialogLayout.findViewById<EditText>(R.id.newConfirmUserPassword)
-        builder.setView(dialogLayout)
-        builder.setPositiveButton(R.string.password_new_confirm) {
-                dialogInterface, i ->
-            if (newUserPass.text.toString() == newUserPassConfirm.text.toString()){
-                app.currentUser.password = hashString(newUserPass.text.toString())
-                    app.users.updateUser(app.currentUser)
-                    toast(R.string.password_change_success)
-            } else {
-                toast(R.string.error_signup_confirm)
-            }
-        }
-        builder.show()
-    }
+//    fun showDialog(view: View) {
+//        val builder = AlertDialog.Builder(this)
+//        val inflater = layoutInflater
+//        builder.setTitle(R.string.settings_change_password)
+//        val dialogLayout = inflater.inflate(R.layout.dialog_settings, null)
+//        val newUserPass  = dialogLayout.findViewById<EditText>(R.id.newUserPassword)
+//        val newUserPassConfirm  = dialogLayout.findViewById<EditText>(R.id.newConfirmUserPassword)
+//        builder.setView(dialogLayout)
+//        builder.setPositiveButton(R.string.password_new_confirm) {
+//                dialogInterface, i ->
+//            if (newUserPass.text.toString() == newUserPassConfirm.text.toString()){
+//                async(UI) {
+//                    app.currentUser.password = hashString(newUserPass.text.toString())
+//                    app.users.updateUser(app.currentUser)
+//                    toast(R.string.password_change_success)
+//                }
+//            } else {
+//                toast(R.string.error_signup_confirm)
+//            }
+//        }
+//        builder.show()
+//    }
 }

@@ -4,32 +4,20 @@ import androidx.room.*
 import org.wit.hillfort.models.HillfortModel
 
 @Dao
-interface UserDao {
+interface HillfortDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addUser(user:UserModel, toVisit: ArrayList<HillfortModel>)
+    fun create(hillfortModel: HillfortModel)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addUser(user: UserModel)
+    @Query("SELECT * FROM HillfortModel")
+    fun findAll(): MutableList<HillfortModel>
 
-    @Query("SELECT * FROM UserModel")
-    fun getUsers(): List<UserModel>
-
-    @Query("select selectedHillfort from UserModel where id = :id")
-    fun findById(id :Long) : HillfortModel?
-
-    @Query("select hillforts from UserModel")
-    fun findAllHillforts(): List<HillfortModel>
+    @Query("select * from HillfortModel where id = :id")
+    fun findById(id: Long): HillfortModel
 
     @Update
-    fun updateUser(user: UserModel, hillfort: HillfortModel)
-
-    @Update
-    fun updateUser(user: UserModel)
+    fun update(hillfort: HillfortModel)
 
     @Delete
-    fun deleteUser(user:UserModel)
-
-    @Delete
-    fun deleteHillfort(user: UserModel, hillfort: HillfortModel)
+    fun deletePlacemark(hillfort: HillfortModel)
 }

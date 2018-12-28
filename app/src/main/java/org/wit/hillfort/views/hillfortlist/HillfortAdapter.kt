@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import kotlinx.android.synthetic.main.card_hillfort.view.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import org.wit.hillfort.R
 import org.wit.hillfort.helpers.readImageFromPath
 import org.wit.hillfort.main.MainApp
@@ -18,7 +20,7 @@ interface HillfortListener {
     fun onHillfortClick(hillfort: HillfortModel)
 }
 
-class HillfortAdapter constructor(private var hillforts: ArrayList<HillfortModel>,
+class HillfortAdapter constructor(private var hillforts: List<HillfortModel>,
                                   private val listener: HillfortListener, var app: MainApp) : androidx.recyclerview.widget.RecyclerView.Adapter<HillfortAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
@@ -42,23 +44,23 @@ class HillfortAdapter constructor(private var hillforts: ArrayList<HillfortModel
         fun bind(hillfort: HillfortModel, listener : HillfortListener, app:MainApp) {
             itemView.hillfortName.text = hillfort.name
             itemView.description.text = hillfort.description
-            if (hillfort.images.isNotEmpty()) {
-                itemView.imageIcon.setImageBitmap((readImageFromPath(itemView.context, hillfort.images.first())))
-            }
+            itemView.imageIcon.setImageBitmap(readImageFromPath(itemView.context, hillfort.image))
             val checkBox: CheckBox = itemView.checkBoxVisited
             checkBox.isChecked = hillfort.visited
             checkBox.setOnCheckedChangeListener { _, isChecked ->
-                if (checkBox.isChecked){
-                    hillfort.visited = true
-                    app.currentUser.numVisited ++
-                    val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                    hillfort.dateVisited = date
-                    app.users.updateUser(app.currentUser.copy())
-                } else {
-                    hillfort.visited = false
-                    app.currentUser.numVisited --
-                    hillfort.dateVisited = ""
-                    app.users.updateUser(app.currentUser.copy())
+                async(UI) {
+                    if (checkBox.isChecked) {
+                        hillfort.visited = true
+//                        app.currentUser.numVisited++
+                        val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                        hillfort.dateVisited = date
+                        app.hillforts.update(hillfort)
+                    } else {
+                        hillfort.visited = false
+//                        app.currentUser.numVisited--
+                        hillfort.dateVisited = ""
+                        app.hillforts.update(hillfort)
+                    }
                 }
             }
             itemView.setOnClickListener { listener.onHillfortClick(hillfort) }

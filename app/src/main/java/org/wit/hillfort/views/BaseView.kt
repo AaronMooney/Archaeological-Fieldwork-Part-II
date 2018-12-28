@@ -13,16 +13,16 @@ import org.wit.hillfort.views.editlocation.EditLocationView
 import org.wit.hillfort.views.map.HillfortMapsView
 import org.wit.hillfort.views.hillfort.HillfortView
 import org.wit.hillfort.views.hillfortlist.HillfortListView
+import org.wit.hillfort.views.settings.SettingsView
 
 val IMAGE_REQUEST = 1
 val LOCATION_REQUEST = 2
-val IMAGE_GALLERY_REQUEST = 3
 
 enum class VIEW {
     LOCATION, HILLFORT, MAPS, LIST, SETTINGS
 }
 
-open abstract class BaseView() : AppCompatActivity(), AnkoLogger, ImageListener {
+open abstract class BaseView() : AppCompatActivity(), AnkoLogger {
 
     var basePresenter: BasePresenter? = null
 
@@ -67,11 +67,6 @@ open abstract class BaseView() : AppCompatActivity(), AnkoLogger, ImageListener 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         basePresenter?.doRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    fun loadImages(images: List<String>) {
-        imageGallery.adapter = ImageGalleryAdapter(images, this)
-        imageGallery.adapter?.notifyDataSetChanged()
     }
 
     open fun showHillfort(hillfort: HillfortModel) {}

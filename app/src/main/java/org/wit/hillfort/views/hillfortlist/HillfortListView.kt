@@ -41,9 +41,6 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
 
         val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = HillfortAdapter(presenter.getHillforts(), this, app)
-        recyclerView.adapter?.notifyDataSetChanged()
-        loadHillforts()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -57,7 +54,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
 
             R.id.item_map -> presenter.doShowHillfortsMap()
 
-            R.id.item_logout -> presenter.doLogout()
+//            R.id.item_logout -> presenter.doLogout()
 
             R.id.item_settings -> presenter.doShowSettings()
         }
@@ -73,7 +70,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
 
             R.id.nav_settings -> presenter.doShowSettings()
 
-            R.id.nav_logout -> presenter.doLogout()
+//            R.id.nav_logout -> presenter.doLogout()
         }
         return false
     }
@@ -82,16 +79,13 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
         presenter.doEditHillfort(hillfort)
     }
 
-    override fun onHillfortImageClick(image: String) {
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        loadHillforts()
+        presenter.loadHillforts()
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun loadHillforts() {
-        recyclerView.adapter = HillfortAdapter(app.currentUser.copy().hillforts, this, app)
+    override fun showHillforts(hillforts: List<HillfortModel> ) {
+        recyclerView.adapter = HillfortAdapter(hillforts, this, app)
         recyclerView.adapter?.notifyDataSetChanged()
     }
 }

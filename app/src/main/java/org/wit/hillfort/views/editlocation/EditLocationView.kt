@@ -63,9 +63,6 @@ class EditLocationView : BaseView(), GoogleMap.OnMarkerDragListener, GoogleMap.O
         return false
     }
 
-    override fun onHillfortImageClick(image: String) {
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         mapView.onDestroy()

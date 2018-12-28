@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import org.jetbrains.anko.intentFor
 import org.wit.hillfort.R
+import org.wit.hillfort.views.hillfortlist.HillfortListView
 import java.lang.Exception
 
 class SplashView : AppCompatActivity() {
@@ -17,7 +18,7 @@ class SplashView : AppCompatActivity() {
                 try {
                     Thread.sleep(5000)
 
-                    startActivityForResult(intentFor<UserWelcomeView>(),0)
+                    startActivityForResult(intentFor<HillfortListView>(),0)
                 } catch (e: Exception){
                     e.printStackTrace()
                 }

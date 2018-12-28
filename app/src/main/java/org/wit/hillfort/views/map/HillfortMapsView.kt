@@ -7,12 +7,12 @@ import org.wit.hillfort.R
 
 import kotlinx.android.synthetic.main.activity_hillfort_maps.*
 import kotlinx.android.synthetic.main.content_hillfort_maps.*
+import org.wit.hillfort.helpers.readImageFromPath
 import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.HillfortModel
 import org.wit.hillfort.views.BaseView
-import org.wit.hillfort.views.ImageListener
 
-class HillfortMapsView : BaseView(), GoogleMap.OnMarkerClickListener, ImageListener {
+class HillfortMapsView : BaseView(), GoogleMap.OnMarkerClickListener {
 
     lateinit var presenter: HillfortMapPresenter
     lateinit var map: GoogleMap
@@ -29,14 +29,18 @@ class HillfortMapsView : BaseView(), GoogleMap.OnMarkerClickListener, ImageListe
         mapView.getMapAsync {
             map = it
             it.setOnMarkerClickListener(this)
-            presenter.doPopulateMap(it, app.currentUser.copy().hillforts)
+            presenter.loadHillforts()
         }
     }
 
     override fun showHillfort(hillfort: HillfortModel) {
         currentTitle.text = hillfort.name
         currentDescription.text = hillfort.description
-        loadImages(hillfort.images)
+        imageView.setImageBitmap(readImageFromPath(this, hillfort.image))
+    }
+
+    override fun showHillforts(hillforts: List<HillfortModel>) {
+        presenter.doPopulateMap(map, hillforts)
     }
 
     override fun onDestroy() {
@@ -67,9 +71,5 @@ class HillfortMapsView : BaseView(), GoogleMap.OnMarkerClickListener, ImageListe
     override fun onMarkerClick(marker: Marker): Boolean {
         presenter.doMarkerSelected(marker)
         return true
-    }
-
-    override fun onHillfortImageClick(image: String) {
-        presenter.doImageClick(image)
     }
 }

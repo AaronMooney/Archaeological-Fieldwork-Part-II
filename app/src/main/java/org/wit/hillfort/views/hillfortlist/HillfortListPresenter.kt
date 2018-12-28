@@ -7,11 +7,15 @@ import org.wit.hillfort.models.HillfortModel
 import org.wit.hillfort.views.BasePresenter
 import org.wit.hillfort.views.BaseView
 import org.wit.hillfort.views.VIEW
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 
 class HillfortListPresenter(view: BaseView) : BasePresenter(view) {
 
-    fun getHillforts(): ArrayList<HillfortModel> {
-        return app.currentUser.copy().hillforts
+    fun loadHillforts() {
+        async(UI) {
+            view?.showHillforts(app.hillforts.findAll())
+        }
     }
 
     fun doAddHillfort() {
@@ -25,12 +29,12 @@ class HillfortListPresenter(view: BaseView) : BasePresenter(view) {
     fun doShowHillfortsMap() {
         view?.navigateTo(VIEW.MAPS)
     }
-
-    fun doLogout(){
-        view?.setResult(AppCompatActivity.RESULT_OK)
-        view?.toast(R.string.logged_out)
-        view?.finish()
-    }
+//
+//    fun doLogout(){
+//        view?.setResult(AppCompatActivity.RESULT_OK)
+//        view?.toast(R.string.logged_out)
+//        view?.finish()
+//    }
 
     fun doShowSettings(){
         view?.navigateTo(VIEW.SETTINGS)

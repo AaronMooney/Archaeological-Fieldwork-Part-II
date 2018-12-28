@@ -8,11 +8,11 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.content_hillfort_maps.*
 import org.jetbrains.anko.intentFor
 import org.wit.hillfort.helpers.readImageFromPath
-import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.HillfortModel
 import org.wit.hillfort.views.BasePresenter
 import org.wit.hillfort.views.BaseView
-import org.wit.hillfort.views.ImageView
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 
 class HillfortMapPresenter(view: BaseView) : BasePresenter(view) {
 
@@ -27,20 +27,18 @@ class HillfortMapPresenter(view: BaseView) : BasePresenter(view) {
     }
 
     fun doMarkerSelected(marker: Marker) {
-        val tag = marker.tag as Long
-        val hillfort = app.users.findById(app.currentUser.copy(), tag)
-        view?.currentTitle?.text = hillfort!!.name
-        view?.currentDescription?.text = hillfort!!.description
-        if (!hillfort.images.isEmpty()) {
-            view?.imageView?.setImageBitmap(readImageFromPath(view!!, hillfort.images[0]))
+        async(UI) {
+            val tag = marker.tag as Long
+            val hillfort = app.hillforts.findById(tag)
+            view?.currentTitle?.text = hillfort!!.name
+            view?.currentDescription?.text = hillfort!!.description
+            view?.imageView?.setImageBitmap(readImageFromPath(view!!, hillfort.image))
         }
     }
 
-    fun doImageClick(image: String){
-        view?.startActivityForResult(view!!.intentFor<ImageView>().putExtra("image", image), 3)
-    }
-
     fun loadHillforts() {
-        view?.showHillforts(app.currentUser.hillforts)
+        async(UI) {
+            view?.showHillforts(app.hillforts.findAll())
+        }
     }
 }

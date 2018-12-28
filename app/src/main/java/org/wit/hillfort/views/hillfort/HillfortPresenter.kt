@@ -23,6 +23,8 @@ import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.Location
 import org.wit.hillfort.models.HillfortModel
 import org.wit.hillfort.views.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 
 class HillfortPresenter(view: BaseView) : BasePresenter(view){
 
@@ -60,13 +62,14 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
         hillfort.name = name
         hillfort.description = description
         hillfort.notes = notes
-        if (edit) {
-            app.users.updateUser(app.currentUser.copy(), hillfort)
-        } else {
-            app.currentUser.copy().hillforts.add(hillfort.copy())
-            app.users.updateUser(app.currentUser.copy(), hillfort)
+        async(UI) {
+            if (edit) {
+                app.hillforts.update(hillfort)
+            } else {
+                app.hillforts.create(hillfort)
+            }
+            view?.finish()
         }
-        view?.finish()
     }
 
     fun doCancel() {
@@ -74,8 +77,10 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
     }
 
     fun doDelete() {
-        app.users.deleteHillfort(app.currentUser,hillfort.copy())
-        view?.finish()
+        async(UI) {
+            app.hillforts.delete(hillfort)
+            view?.finish()
+        }
     }
 
     fun doSelectImage() {
@@ -86,10 +91,6 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
         NavUtils.navigateUpFromSameTask(view!!)
     }
 
-    fun doImageClick(image: String){
-        view?.startActivityForResult(view!!.intentFor<ImageView>().putExtra("image", image), IMAGE_GALLERY_REQUEST)
-    }
-
     fun doSetLocation() {
         view?.navigateTo(VIEW.LOCATION, LOCATION_REQUEST, "location", Location(hillfort.lat, hillfort.lng, hillfort.zoom))
     }
@@ -97,8 +98,7 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
     override fun doActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         when (requestCode) {
             IMAGE_REQUEST -> {
-                hillfort.images.add(data.getData().toString())
-                view?.loadImages(hillfort.images)
+                hillfort.image = data.data.toString()
                 view?.showHillfort(hillfort)
             }
             LOCATION_REQUEST -> {

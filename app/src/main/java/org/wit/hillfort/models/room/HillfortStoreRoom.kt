@@ -2,12 +2,15 @@ package org.wit.hillfort.models.room
 
 import android.content.Context
 import androidx.room.Room
-import org.wit.hillfort.models.HillfortModel
 import org.jetbrains.anko.coroutines.experimental.bg
+import org.wit.hillfort.models.HillfortModel
+import org.wit.hillfort.models.HillfortStore
+import org.wit.hillfort.models.room.Database
+import org.wit.hillfort.models.room.HillfortDao
 
-class UserStoreRoom(val context: Context) : UserStore {
+class HillfortStoreRoom(val context: Context) : HillfortStore {
 
-    var dao: UserDao
+    var dao: HillfortDao
 
     init {
         val database = Room.databaseBuilder(context, Database::class.java, "room_sample.db")
@@ -16,63 +19,37 @@ class UserStoreRoom(val context: Context) : UserStore {
         dao = database.hillfortDao()
     }
 
-    suspend override fun findAllHillforts(): ArrayList<HillfortModel> {
-        val deferredHillforts = bg {
-            dao.findAllHillforts()
+    suspend override fun findAll(): MutableList<HillfortModel> {
+        val deferredPlacemarks = bg {
+            dao.findAll()
         }
-        val hillforts = deferredHillforts.await()
-        return hillforts as ArrayList<HillfortModel>
+        val hillforts = deferredPlacemarks.await()
+        return hillforts
     }
 
-    suspend override fun getUsers(): List<UserModel> {
-        val deferredUsers = bg {
-            dao.getUsers()
-        }
-        val users = deferredUsers.await()
-        return users
-    }
-
-    suspend override fun findById(user: UserModel,id: Long): HillfortModel? {
-        val deferredHillfort = bg {
+    suspend override fun findById(id: Long): HillfortModel? {
+        val deferredPlacemark = bg {
             dao.findById(id)
         }
-        val hillfort = deferredHillfort.await()
+        val hillfort = deferredPlacemark.await()
         return hillfort
     }
 
-    suspend override fun addUser(user: UserModel) {
+    suspend override fun create(hillfort: HillfortModel) {
         bg {
-            dao.addUser(user)
+            dao.create(hillfort)
         }
     }
 
-    suspend override fun addUser(user: UserModel, toVisit: ArrayList<HillfortModel>) {
+    suspend override fun update(hillfort: HillfortModel) {
         bg {
-            dao.addUser(user, toVisit)
+            dao.update(hillfort)
         }
     }
 
-    suspend override fun updateUser(user: UserModel) {
+    suspend override fun delete(hillfort: HillfortModel) {
         bg {
-            dao.updateUser(user)
-        }
-    }
-
-    suspend override fun updateUser(user: UserModel, hillfort: HillfortModel) {
-        bg {
-            dao.updateUser(user, hillfort)
-        }
-    }
-
-    suspend override fun deleteUser(user: UserModel) {
-        bg {
-            dao.deleteUser(user)
-        }
-    }
-
-    suspend override fun deleteHillfort(user: UserModel, hillfort: HillfortModel) {
-        bg {
-            dao.deleteHillfort(user, hillfort)
+            dao.deletePlacemark(hillfort)
         }
     }
 

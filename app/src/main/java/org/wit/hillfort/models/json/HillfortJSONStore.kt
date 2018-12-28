@@ -8,122 +8,81 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.wit.hillfort.helpers.*
 import org.wit.hillfort.models.HillfortModel
+import org.wit.hillfort.models.HillfortStore
 import java.util.*
 import kotlin.collections.ArrayList
 
-val JSON_FILE_USERS = "users.json"
-val gsonBuilderUser = GsonBuilder().setPrettyPrinting().create()
-val listTypeUser = object : TypeToken<java.util.ArrayList<UserModel>>() {}.type
+val JSON_FILE = "hillforts.json"
+val gsonBuilder = GsonBuilder().setPrettyPrinting().create()
+val listType = object : TypeToken<java.util.ArrayList<HillfortModel>>() {}.type
 
-class UserJSONStore : UserStore, AnkoLogger {
+class HillfortJSONStore : HillfortStore, AnkoLogger {
 
     val context: Context
-    var users = ArrayList<UserModel>()
     var hillforts = ArrayList<HillfortModel>()
 
     constructor (context: Context) {
         this.context = context
-        if (exists(context, JSON_FILE_USERS)) {
+        if (exists(context, JSON_FILE)) {
             deserialize()
         }
     }
 
-    suspend override fun getUsers(): List<UserModel> {
-        return users
-    }
-
-    suspend override fun findAllHillforts(): ArrayList<HillfortModel> {
+    suspend override fun findAll(): MutableList<HillfortModel> {
         return hillforts
     }
 
-    suspend override fun addUser(user: UserModel, toVisit: ArrayList<HillfortModel>) {
-        hillforts = toVisit
-        toVisit.forEach {
-            it.id = generateRandomId()
-        }
-        user.id = generateRandomId()
-        users.add(user)
+    suspend override fun findById(id:Long) : HillfortModel? {
+        val foundHillfort: HillfortModel? = hillforts.find { it.id == id }
+        return foundHillfort
+    }
+
+    suspend override fun create(hillfort: HillfortModel) {
+        hillfort.id = generateRandomId()
+        hillforts.add(hillfort)
         serialize()
     }
 
-    suspend override fun addUser(user: UserModel) {
-        user.id = generateRandomId()
+    fun initHillforts() {
         var hillfortsToVisit = ArrayList<HillfortModel>()
         hillfortsToVisit = populate(hillfortsToVisit)
         hillfortsToVisit.forEach {
             it.id = generateRandomId()
         }
-        user.hillforts = hillfortsToVisit
-        users.add(user)
+        hillforts = hillfortsToVisit
         serialize()
     }
 
-    suspend override fun updateUser(user: UserModel, hillfort: HillfortModel){
-        info("updating")
-        var foundUser: UserModel? = users.find { u -> u.id == user.id}
-        var foundHillfort: HillfortModel? = user.hillforts.find { h -> h.id == hillfort.id}
-        if (foundUser != null && foundHillfort!= null){
-            info("blalu")
+    suspend override fun update(hillfort: HillfortModel) {
+        val hillfortsList = findAll() as java.util.ArrayList<HillfortModel>
+        var foundHillfort: HillfortModel? = hillfortsList.find { p -> p.id == hillfort.id }
+        if (foundHillfort != null) {
             foundHillfort.name = hillfort.name
             foundHillfort.description = hillfort.description
-            foundHillfort.images = ArrayList(hillfort.images)
+            foundHillfort.image = hillfort.image
             foundHillfort.lat = hillfort.lat
             foundHillfort.lng = hillfort.lng
             foundHillfort.zoom = hillfort.zoom
             foundHillfort.visited = hillfort.visited
             foundHillfort.notes = hillfort.notes
-            foundUser.name = user.name
-            foundUser.email = user.email
-            foundUser.password = user.password
-            foundUser.hillforts = user.hillforts
-            serialize()
         }
-    }
-
-    suspend override fun updateUser(user: UserModel){
-        info("updating")
-        var foundUser: UserModel? = users.find { u -> u.id == user.id}
-        if (foundUser != null) {
-            foundUser.name = user.name
-            foundUser.email = user.email
-            foundUser.password = user.password
-            foundUser.hillforts = user.hillforts
-            serialize()
-        }
-        user.numVisited = 0
-        user.hillforts.forEach {
-            if (it.visited){
-                user.numVisited ++
-            }
-        }
-    }
-
-    suspend override fun deleteUser(user: UserModel) {
-        users.remove(user)
         serialize()
     }
 
-    suspend override fun deleteHillfort(user: UserModel, hillfort: HillfortModel) {
-        user.hillforts.remove(hillfort)
+    suspend override fun delete(hillfort: HillfortModel) {
+        hillforts.remove(hillfort)
         serialize()
     }
 
-    suspend override fun findById(user: UserModel, id :Long) : HillfortModel? {
-        val foundPlacemark: HillfortModel? = user.hillforts.find { it.id == id }
-        user.selectedHillfort = foundPlacemark
-        return foundPlacemark
-    }
 
     private fun serialize() {
-        val jsonString = gsonBuilderUser.toJson(users,
-            listTypeUser
-        )
-        write(context, JSON_FILE_USERS, jsonString)
+        val jsonString = gsonBuilder.toJson(hillforts, listType)
+        write(context, JSON_FILE, jsonString)
     }
 
     private fun deserialize() {
-        val jsonString = read(context, JSON_FILE_USERS)
-        users = Gson().fromJson(jsonString, listTypeUser)
+        val jsonString = read(context, JSON_FILE)
+        hillforts = Gson().fromJson(jsonString, listType)
     }
 
     fun generateRandomId(): Long {
