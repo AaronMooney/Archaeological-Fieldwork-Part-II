@@ -41,6 +41,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
 
         val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
+        presenter.loadHillforts()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
