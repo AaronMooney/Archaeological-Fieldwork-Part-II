@@ -5,6 +5,7 @@
     <string name="button_addImage">Add Image</string>
     <string name="button_login">Login</string>
     <string name="button_signup">Sign Up</string>
+    <string name="title_activity_login"> Signup/Login</string>
     <string name="hint_hillfortTitle">Hillfort Name</string>
     <string name="hint_hillfortDescription">Description</string>
     <string name="hint_userName">Name</string>
@@ -18,6 +19,7 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_saveHillfort">Save</string>
+    <string name="menu_showMap">Show Map</string>
     <string name="enter_hillfort_Name">Please enter a Hillfort Name</string>
     <string name="save_hillfort">Save Hillfort</string>
     <string name="select_hillfort_image">Select hillfort image</string>

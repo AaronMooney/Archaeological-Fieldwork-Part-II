@@ -40,6 +40,14 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".views.login.LoginView"
+                  android:label="@string/title_activity_hillfort"
+                  android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+            </intent-filter>
+        </activity>
+
         <activity
                 android:name=".views.settings.SettingsView">
             <meta-data

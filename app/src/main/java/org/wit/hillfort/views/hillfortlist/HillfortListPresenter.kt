@@ -1,6 +1,7 @@
 package org.wit.hillfort.views.hillfortlist
 
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.toast
 import org.wit.hillfort.R
 import org.wit.hillfort.models.HillfortModel
@@ -29,12 +30,11 @@ class HillfortListPresenter(view: BaseView) : BasePresenter(view) {
     fun doShowHillfortsMap() {
         view?.navigateTo(VIEW.MAPS)
     }
-//
-//    fun doLogout(){
-//        view?.setResult(AppCompatActivity.RESULT_OK)
-//        view?.toast(R.string.logged_out)
-//        view?.finish()
-//    }
+
+    fun doLogout() {
+        FirebaseAuth.getInstance().signOut()
+        view?.navigateTo(VIEW.LOGIN)
+    }
 
     fun doShowSettings(){
         view?.navigateTo(VIEW.SETTINGS)

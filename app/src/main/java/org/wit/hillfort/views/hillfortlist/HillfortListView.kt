@@ -55,7 +55,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
 
             R.id.item_map -> presenter.doShowHillfortsMap()
 
-//            R.id.item_logout -> presenter.doLogout()
+            R.id.item_logout -> presenter.doLogout()
 
             R.id.item_settings -> presenter.doShowSettings()
         }

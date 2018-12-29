@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
@@ -48,6 +49,7 @@ ext {
     picasso_version = '2.71828'
     picasso_palette_version = '1.0.0'
     room_version = '2.0.0'
+    firebase_version = '16.0.5'
 }
 
 dependencies {
@@ -70,6 +72,9 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$play_services_location_version"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    implementation "com.google.firebase:firebase-auth:$firebase_version"
+    implementation "com.google.firebase:firebase-database:$firebase_version"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
