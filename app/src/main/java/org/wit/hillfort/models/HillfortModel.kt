@@ -10,6 +10,7 @@ import java.util.*
 @Parcelize
 @Entity
 data class HillfortModel(@PrimaryKey(autoGenerate = true) var id: Long = 0,
+                         var fbId : String = "",
                          var name: String = "",
                          var description: String = "",
                          var image: String = "",

@@ -110,4 +110,8 @@ class HillfortMemStore : HillfortStore, AnkoLogger {
         )
         return toVisit
     }
+
+    override fun clear() {
+        hillforts.clear()
+    }
 }

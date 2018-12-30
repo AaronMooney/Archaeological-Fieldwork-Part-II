@@ -1,8 +1,11 @@
 package org.wit.hillfort.views
 
+import android.content.Context
 import android.content.Intent
 
 import android.os.Parcelable
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.firebase.auth.FirebaseAuth
@@ -56,6 +59,13 @@ open abstract class BaseView() : AppCompatActivity(), AnkoLogger {
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
             toolbar.title = "${title}: ${user.email}"
+        }
+    }
+
+    fun hideKeyboard(view: View) {
+        view.apply {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 

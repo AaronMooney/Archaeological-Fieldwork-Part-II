@@ -1,17 +1,17 @@
 package org.wit.hillfort.views.hillfortlist
 
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import org.jetbrains.anko.toast
-import org.wit.hillfort.R
 import org.wit.hillfort.models.HillfortModel
 import org.wit.hillfort.views.BasePresenter
 import org.wit.hillfort.views.BaseView
 import org.wit.hillfort.views.VIEW
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.AnkoLogger
 
 class HillfortListPresenter(view: BaseView) : BasePresenter(view) {
+
+    val logger = AnkoLogger<HillfortListPresenter>()
 
     fun loadHillforts() {
         async(UI) {
@@ -33,6 +33,7 @@ class HillfortListPresenter(view: BaseView) : BasePresenter(view) {
 
     fun doLogout() {
         FirebaseAuth.getInstance().signOut()
+        app.hillforts.clear()
         view?.navigateTo(VIEW.LOGIN)
     }
 

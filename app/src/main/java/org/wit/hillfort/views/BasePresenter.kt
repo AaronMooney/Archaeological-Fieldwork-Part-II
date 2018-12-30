@@ -1,6 +1,7 @@
 package org.wit.hillfort.views
 
 import android.content.Intent
+import com.google.firebase.auth.FirebaseAuth
 import org.wit.hillfort.main.MainApp
 
 open class BasePresenter(var view: BaseView?) {

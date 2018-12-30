@@ -14,7 +14,7 @@ class LoginView : BaseView() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        init(toolbar, false)
+        init(toolbar_login, false)
         progressBar.visibility = View.GONE
 
         presenter = initPresenter(LoginPresenter(this)) as LoginPresenter
@@ -26,6 +26,7 @@ class LoginView : BaseView() {
                 toast("Please provide email + password")
             }
             else {
+                hideKeyboard(it)
                 presenter.doSignUp(email,password)
             }
         }
@@ -37,6 +38,7 @@ class LoginView : BaseView() {
                 toast("Please provide email + password")
             }
             else {
+                hideKeyboard(it)
                 presenter.doLogin(email,password)
             }
         }

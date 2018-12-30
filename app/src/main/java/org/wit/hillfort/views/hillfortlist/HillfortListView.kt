@@ -13,6 +13,11 @@ import org.wit.hillfort.R
 import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.HillfortModel
 import org.wit.hillfort.views.BaseView
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.intentFor
+import org.wit.hillfort.models.firebase.HillfortFireStore
+import org.wit.hillfort.views.login.LoginView
 
 class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigationItemSelectedListener{
 
@@ -20,6 +25,8 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
     lateinit var presenter: HillfortListPresenter
     lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
     lateinit var toggleDrawer: ActionBarDrawerToggle
+
+    var fireStore: HillfortFireStore? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +46,18 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
 
         presenter = initPresenter(HillfortListPresenter(this)) as HillfortListPresenter
 
-        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
+
+        async(UI) {
+            if (app.hillforts is HillfortFireStore) {
+                fireStore = app.hillforts as HillfortFireStore
+                if (app.hillforts.findAll().isEmpty()) {
+                    fireStore?.initHillforts()
+                    presenter.loadHillforts()
+                }
+            }
+        }
         presenter.loadHillforts()
     }
 
@@ -71,7 +88,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
 
             R.id.nav_settings -> presenter.doShowSettings()
 
-//            R.id.nav_logout -> presenter.doLogout()
+            R.id.nav_logout -> presenter.doLogout()
         }
         return false
     }
@@ -88,5 +105,18 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
     override fun showHillforts(hillforts: List<HillfortModel> ) {
         recyclerView.adapter = HillfortAdapter(hillforts, this, app)
         recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    override fun onDestroy() {
+        presenter.doLogout()
+        super.onDestroy()
+    }
+
+    public override fun onResume() {
+        async(UI) {
+            showHillforts(app.hillforts.findAll())
+        }
+        super.onResume()
+
     }
 }

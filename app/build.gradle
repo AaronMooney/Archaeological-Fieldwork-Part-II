@@ -50,6 +50,7 @@ ext {
     picasso_palette_version = '1.0.0'
     room_version = '2.0.0'
     firebase_version = '16.0.5'
+    glide_version = '4.8.0'
 }
 
 dependencies {
@@ -71,10 +72,12 @@ dependencies {
     implementation "androidx.palette:palette:$picasso_palette_version"
     implementation "com.google.android.gms:play-services-location:$play_services_location_version"
     implementation "androidx.room:room-runtime:$room_version"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
     kapt "androidx.room:room-compiler:$room_version"
 
     implementation "com.google.firebase:firebase-auth:$firebase_version"
     implementation "com.google.firebase:firebase-database:$firebase_version"
+    implementation "com.google.firebase:firebase-storage:$firebase_version"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'

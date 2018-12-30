@@ -1,91 +1,129 @@
-package org.wit.hillfort.models.json
+package org.wit.hillfort.models.firebase
 
 import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
+import android.graphics.Bitmap
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import org.wit.hillfort.helpers.*
+import org.wit.hillfort.helpers.readImageFromPath
 import org.wit.hillfort.models.HillfortModel
 import org.wit.hillfort.models.HillfortStore
 import org.wit.hillfort.models.Location
-import java.util.*
-import kotlin.collections.ArrayList
+import java.io.ByteArrayOutputStream
+import java.io.File
 
-val JSON_FILE = "hillforts.json"
-val gsonBuilder = GsonBuilder().setPrettyPrinting().create()
-val listType = object : TypeToken<java.util.ArrayList<HillfortModel>>() {}.type
 
-class HillfortJSONStore : HillfortStore, AnkoLogger {
 
-    val context: Context
-    var hillforts = ArrayList<HillfortModel>()
+class HillfortFireStore(val context: Context) : HillfortStore, AnkoLogger {
 
-    constructor (context: Context) {
-        this.context = context
-        if (exists(context, JSON_FILE)) {
-            deserialize()
-        }
-    }
+    val hillforts = ArrayList<HillfortModel>()
+    lateinit var userId: String
+    lateinit var db: DatabaseReference
+    lateinit var st: StorageReference
+    val logger = AnkoLogger<HillfortFireStore>()
 
     suspend override fun findAll(): MutableList<HillfortModel> {
         return hillforts
     }
 
-    suspend override fun findById(id:Long) : HillfortModel? {
-        val foundHillfort: HillfortModel? = hillforts.find { it.id == id }
+    suspend override fun findById(id: Long): HillfortModel? {
+        val foundHillfort: HillfortModel? = hillforts.find { p -> p.id == id }
         return foundHillfort
     }
 
     suspend override fun create(hillfort: HillfortModel) {
-        hillfort.id = generateRandomId()
-        hillforts.add(hillfort)
-        serialize()
-    }
-
-    fun initHillforts() {
-        var hillfortsToVisit = ArrayList<HillfortModel>()
-        hillfortsToVisit = populate(hillfortsToVisit)
-        hillfortsToVisit.forEach {
-            it.id = generateRandomId()
+        val key = db.child("users").child(userId).child("hillforts").push().key
+        key?.let {
+            hillfort.fbId = key!!
+            hillforts.add(hillfort)
+            db.child("users").child(userId).child("hillforts").child(key).setValue(hillfort)
+            updateImage(hillfort)
         }
-        hillforts = hillfortsToVisit
-        serialize()
     }
 
     suspend override fun update(hillfort: HillfortModel) {
-        val hillfortsList = findAll() as java.util.ArrayList<HillfortModel>
-        var foundHillfort: HillfortModel? = hillfortsList.find { p -> p.id == hillfort.id }
+        var foundHillfort: HillfortModel? = hillforts.find { p -> p.fbId == hillfort.fbId }
         if (foundHillfort != null) {
             foundHillfort.name = hillfort.name
             foundHillfort.description = hillfort.description
             foundHillfort.image = hillfort.image
             foundHillfort.location = hillfort.location
-            foundHillfort.visited = hillfort.visited
-            foundHillfort.notes = hillfort.notes
         }
-        serialize()
+
+        db.child("users").child(userId).child("hillforts").child(hillfort.fbId).setValue(hillfort)
+        if ((hillfort.image.length) > 0 && (hillfort.image[0] != 'h')) {
+            updateImage(hillfort)
+        }
     }
 
     suspend override fun delete(hillfort: HillfortModel) {
+        db.child("users").child(userId).child("hillforts").child(hillfort.fbId).removeValue()
         hillforts.remove(hillfort)
-        serialize()
     }
 
-
-    private fun serialize() {
-        val jsonString = gsonBuilder.toJson(hillforts, listType)
-        write(context, JSON_FILE, jsonString)
+    override fun clear() {
+        hillforts.clear()
     }
 
-    private fun deserialize() {
-        val jsonString = read(context, JSON_FILE)
-        hillforts = Gson().fromJson(jsonString, listType)
+    fun fetchHillforts(hillfortsReady: () -> Unit) {
+        val valueEventListener = object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+            }
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                dataSnapshot!!.children.mapNotNullTo(hillforts) { it.getValue<HillfortModel>(HillfortModel::class.java) }
+                hillfortsReady()
+            }
+        }
+        userId = FirebaseAuth.getInstance().currentUser!!.uid
+        db = FirebaseDatabase.getInstance().reference
+        st = FirebaseStorage.getInstance().reference
+        hillforts.clear()
+        db.child("users").child(userId).child("hillforts").addListenerForSingleValueEvent(valueEventListener)
     }
 
-    fun generateRandomId(): Long {
-        return Random().nextLong()
+    fun initHillforts() {
+        userId = FirebaseAuth.getInstance().currentUser!!.uid
+        db = FirebaseDatabase.getInstance().reference
+        async(UI){
+            if (hillforts.isEmpty()){
+                var toVisit = ArrayList<HillfortModel>()
+                toVisit = populate(toVisit)
+                toVisit.forEach {
+                    create(it)
+                }
+            }
+        }
+        logger.info("hello")
+    }
+
+    fun updateImage(hillfort: HillfortModel) {
+        if (hillfort.image != "") {
+            val fileName = File(hillfort.image)
+            val imageName = fileName.getName()
+
+            var imageRef = st.child(userId + '/' + imageName)
+            val baos = ByteArrayOutputStream()
+            val bitmap = readImageFromPath(context, hillfort.image)
+
+            bitmap?.let {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                val data = baos.toByteArray()
+                val uploadTask = imageRef.putBytes(data)
+                uploadTask.addOnFailureListener {
+                    println(it.message)
+                }.addOnSuccessListener { taskSnapshot ->
+                    taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
+                        hillfort.image = it.toString()
+                        db.child("users").child(userId).child("hillforts").child(hillfort.fbId).setValue(hillfort)
+                    }
+                }
+            }
+        }
     }
 
     fun populate(toVisit: ArrayList<HillfortModel>): ArrayList<HillfortModel>{
@@ -122,9 +160,5 @@ class HillfortJSONStore : HillfortStore, AnkoLogger {
             )
         )
         return toVisit
-    }
-
-    override fun clear() {
-        hillforts.clear()
     }
 }
