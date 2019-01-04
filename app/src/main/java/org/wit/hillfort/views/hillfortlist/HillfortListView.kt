@@ -20,6 +20,12 @@ import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.intentFor
 import org.wit.hillfort.models.firebase.HillfortFireStore
 import org.wit.hillfort.views.login.LoginView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.annotation.NonNull
+
+
+
+
 
 class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigationItemSelectedListener{
 
@@ -38,6 +44,23 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
         supportActionBar?.setHomeAsUpIndicator(R.drawable.abc_ic_menu_overflow_material)
 
         app = application as MainApp
+
+        val bottomNavigationView = findViewById<View>(R.id.bottom_navigation) as BottomNavigationView
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+            object : BottomNavigationView.OnNavigationItemSelectedListener {
+                override
+                fun onNavigationItemSelected(item: MenuItem): Boolean {
+                    when (item.itemId) {
+                        R.id.item_add -> presenter.doAddHillfort()
+
+                        R.id.item_map -> presenter.doShowHillfortsMap()
+
+                        R.id.item_settings -> presenter.doShowSettings()
+                    }
+                    return true
+                }
+            })
 
         drawerLayout = findViewById(R.id.drawer)
         toggleDrawer = ActionBarDrawerToggle(this,drawerLayout, R.string.open, R.string.close)
