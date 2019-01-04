@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.RatingBar
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.GoogleMap
 import kotlinx.android.synthetic.main.activity_hillfort.*
@@ -16,7 +17,7 @@ import org.wit.hillfort.helpers.readImageFromPath
 import org.wit.hillfort.models.HillfortModel
 import org.wit.hillfort.views.BaseView
 
-class HillfortView : BaseView(), AnkoLogger {
+class HillfortView : BaseView(), AnkoLogger, RatingBar.OnRatingBarChangeListener {
 
     lateinit var presenter: HillfortPresenter
     var hillfort = HillfortModel()
@@ -32,6 +33,8 @@ class HillfortView : BaseView(), AnkoLogger {
             presenter.doSelectImage()
         }
 
+        ratingBar.onRatingBarChangeListener = this
+
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
             presenter.doConfigureMap(it)
@@ -44,6 +47,8 @@ class HillfortView : BaseView(), AnkoLogger {
     override fun showHillfort(hillfort: HillfortModel) {
         hillfortName.setText(hillfort.name)
         description.setText(hillfort.description)
+        ratingBar.rating = hillfort.rating
+
         Glide.with(this).load(hillfort.image).into(hillfortImage)
         if (!hillfort.image.isEmpty()) {
             chooseImage.setText(R.string.change_hillfort_image)
@@ -74,7 +79,8 @@ class HillfortView : BaseView(), AnkoLogger {
                     presenter.doAddOrSave(
                         hillfortName.text.toString(),
                         description.text.toString(),
-                        additionalNotes.text.toString()
+                        additionalNotes.text.toString(),
+                        ratingBar.rating
                     )
                 }
             }
@@ -84,6 +90,10 @@ class HillfortView : BaseView(), AnkoLogger {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onRatingChanged(p0: RatingBar?, p1: Float, p2: Boolean) {
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

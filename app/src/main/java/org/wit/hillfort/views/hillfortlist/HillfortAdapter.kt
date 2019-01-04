@@ -45,6 +45,7 @@ class HillfortAdapter constructor(private var hillforts: List<HillfortModel>,
         fun bind(hillfort: HillfortModel, listener : HillfortListener, app:MainApp) {
             itemView.hillfortName.text = hillfort.name
             itemView.description.text = hillfort.description
+            itemView.rating.text = hillfort.rating.toString()
             Glide.with(itemView.context).load(hillfort.image).into(itemView.imageIcon)
             val checkBox: CheckBox = itemView.checkBoxVisited
             checkBox.isChecked = hillfort.visited
