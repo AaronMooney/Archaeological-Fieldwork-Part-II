@@ -25,4 +25,10 @@
             android:title="@string/menu_saveHillfort"
             app:showAsAction="always"/>
 
+    <item
+            android:id="@+id/menu_item_share"
+            android:icon="@android:drawable/ic_menu_share"
+            app:showAsAction="ifRoom"
+            android:title="@string/share"/>
+
 </menu>

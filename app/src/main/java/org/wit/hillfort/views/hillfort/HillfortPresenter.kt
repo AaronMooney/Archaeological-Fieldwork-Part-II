@@ -1,9 +1,17 @@
 package org.wit.hillfort.views.hillfort
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
 import androidx.core.app.NavUtils
 import android.widget.TextView
+import androidx.core.content.FileProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
@@ -12,19 +20,22 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import org.jetbrains.anko.intentFor
 import org.wit.hillfort.R
 import org.wit.hillfort.helpers.checkLocationPermissions
 import org.wit.hillfort.helpers.createDefaultLocationRequest
 import org.wit.hillfort.helpers.isPermissionGranted
-import org.wit.hillfort.views.editlocation.EditLocationView
 import org.wit.hillfort.helpers.showImagePicker
-import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.Location
 import org.wit.hillfort.models.HillfortModel
 import org.wit.hillfort.views.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HillfortPresenter(view: BaseView) : BasePresenter(view){
 
@@ -34,6 +45,8 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
     var map: GoogleMap? = null
     var locationService: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(view)
     val locationRequest = createDefaultLocationRequest()
+    lateinit var photoFilePath: String
+    val logger = AnkoLogger<HillfortPresenter>()
 
     init {
         if (view.intent.hasExtra("hillfort_edit")) {
@@ -69,6 +82,7 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
                 app.hillforts.update(hillfort)
             } else {
                 app.hillforts.create(hillfort)
+                app.numHillforts++
             }
             view?.finish()
         }
@@ -81,6 +95,7 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
     fun doDelete() {
         async(UI) {
             app.hillforts.delete(hillfort)
+            app.numHillforts --
             view?.finish()
         }
     }
@@ -107,6 +122,10 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
                 val location = data.extras.getParcelable<Location>("location")
                 hillfort.location = location
                 locationUpdate(location)
+            }
+            REQUEST_IMAGE_CAPTURE -> {
+                hillfort.image = photoFilePath
+                view?.showHillfort(hillfort)
             }
         }
     }
@@ -155,6 +174,47 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
         }
         if (!edit) {
             locationService.requestLocationUpdates(locationRequest, locationCallback, null)
+        }
+    }
+
+    @Throws(IOException::class)
+    fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File = view!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            photoFilePath = absolutePath
+            logger.info("path: " + photoFilePath)
+        }
+    }
+
+    fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(view!!.packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        view!!,
+                        "org.wit.hillfort.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    view!!.startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                }
+            }
         }
     }
 }

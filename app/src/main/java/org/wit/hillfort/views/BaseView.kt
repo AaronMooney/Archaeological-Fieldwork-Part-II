@@ -21,6 +21,8 @@ import org.wit.hillfort.views.settings.SettingsView
 
 val IMAGE_REQUEST = 1
 val LOCATION_REQUEST = 2
+val REQUEST_IMAGE_CAPTURE = 3
+val REQUEST_TAKE_PHOTO = 4
 
 enum class VIEW {
     LOCATION, HILLFORT, MAPS, LIST, SETTINGS, LOGIN
@@ -55,10 +57,6 @@ open abstract class BaseView() : AppCompatActivity(), AnkoLogger {
         toolbar.title = title
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(upEnabled)
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            toolbar.title = "${title}: ${user.email}"
-        }
     }
 
     fun hideKeyboard(view: View) {
