@@ -65,6 +65,7 @@ class HillfortJSONStore : HillfortStore, AnkoLogger {
             foundHillfort.visited = hillfort.visited
             foundHillfort.notes = hillfort.notes
             foundHillfort.rating = hillfort.rating
+            foundHillfort.favorite = hillfort.favorite
         }
         serialize()
     }

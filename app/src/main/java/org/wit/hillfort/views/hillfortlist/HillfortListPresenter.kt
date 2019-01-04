@@ -13,9 +13,21 @@ class HillfortListPresenter(view: BaseView) : BasePresenter(view) {
 
     val logger = AnkoLogger<HillfortListPresenter>()
 
-    fun loadHillforts() {
+    var favorites = ArrayList<HillfortModel>()
+
+    fun loadHillforts(showFavorites: Boolean) {
         async(UI) {
-            view?.showHillforts(app.hillforts.findAll())
+            var hillforts = app.hillforts.findAll()
+            if (showFavorites){
+                favorites.clear()
+                hillforts.forEach {
+                    if (it.favorite){
+                        favorites.add(it)
+                    }
+                }
+                hillforts = favorites
+            }
+            view?.showHillforts(hillforts)
         }
     }
 

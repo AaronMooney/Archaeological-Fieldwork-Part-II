@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.card_hillfort.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.image
 import org.wit.hillfort.R
 import org.wit.hillfort.helpers.readImageFromPath
 import org.wit.hillfort.main.MainApp
@@ -47,6 +49,13 @@ class HillfortAdapter constructor(private var hillforts: List<HillfortModel>,
             itemView.description.text = hillfort.description
             itemView.rating.text = hillfort.rating.toString()
             Glide.with(itemView.context).load(hillfort.image).into(itemView.imageIcon)
+
+            if (!hillfort.favorite) {
+                itemView.item_favorite.image = ContextCompat.getDrawable(app.applicationContext, android.R.drawable.star_big_off)
+            } else {
+                itemView.item_favorite.image = ContextCompat.getDrawable(app.applicationContext, android.R.drawable.star_big_on)
+            }
+
             val checkBox: CheckBox = itemView.checkBoxVisited
             checkBox.isChecked = hillfort.visited
             checkBox.setOnCheckedChangeListener { _, isChecked ->

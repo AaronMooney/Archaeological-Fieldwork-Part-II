@@ -50,5 +50,13 @@
                 android:layout_toEndOf="@+id/description" android:layout_marginTop="1dp"
                 android:layout_marginStart="32dp"/>
 
+        <ImageView
+                android:id="@+id/item_favorite"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:title="@string/menu_favorite"
+                android:layout_alignParentEnd="true" android:layout_marginEnd="12dp"
+                android:layout_alignParentBottom="true" android:layout_marginBottom="9dp"/>
+
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

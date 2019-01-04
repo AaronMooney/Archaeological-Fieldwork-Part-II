@@ -7,10 +7,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.RatingBar
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.GoogleMap
 import kotlinx.android.synthetic.main.activity_hillfort.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.find
+import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 import org.wit.hillfort.R
 import org.wit.hillfort.helpers.readImageFromPath
@@ -21,6 +24,8 @@ class HillfortView : BaseView(), AnkoLogger, RatingBar.OnRatingBarChangeListener
 
     lateinit var presenter: HillfortPresenter
     var hillfort = HillfortModel()
+    val logger = AnkoLogger<HillfortView>()
+    var favorite = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +53,7 @@ class HillfortView : BaseView(), AnkoLogger, RatingBar.OnRatingBarChangeListener
         hillfortName.setText(hillfort.name)
         description.setText(hillfort.description)
         ratingBar.rating = hillfort.rating
+        favorite = hillfort.favorite
 
         Glide.with(this).load(hillfort.image).into(hillfortImage)
         if (!hillfort.image.isEmpty()) {
@@ -59,6 +65,11 @@ class HillfortView : BaseView(), AnkoLogger, RatingBar.OnRatingBarChangeListener
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_placemark, menu)
+        if (!favorite) {
+            menu?.getItem(0)?.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_off))
+        } else {
+            menu?.getItem(0)?.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_on))
+        }
         if (presenter.edit) menu?.getItem(0)?.setVisible(true)
         return super.onCreateOptionsMenu(menu)
     }
@@ -80,8 +91,18 @@ class HillfortView : BaseView(), AnkoLogger, RatingBar.OnRatingBarChangeListener
                         hillfortName.text.toString(),
                         description.text.toString(),
                         additionalNotes.text.toString(),
-                        ratingBar.rating
+                        ratingBar.rating,
+                        favorite
                     )
+                }
+            }
+            R.id.item_favorite -> {
+                if (!favorite) {
+                    item.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_on))
+                    favorite = true
+                } else {
+                    item.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_off))
+                    favorite = false
                 }
             }
             android.R.id.home -> {

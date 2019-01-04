@@ -57,12 +57,13 @@
                 android:configChanges="keyboardHidden|orientation|screenSize">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".views.hillfort.HillfortView" />
+                    android:value=".views.hillfortlist.HillfortListView" />
         </activity>
 
         <activity
                 android:name=".views.editlocation.EditLocationView"
-                android:label="@string/title_activity_maps">
+                android:label="@string/title_activity_maps"
+                android:configChanges="keyboardHidden|orientation|screenSize">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".views.hillfort.HillfortView" />
