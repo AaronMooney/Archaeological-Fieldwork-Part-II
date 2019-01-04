@@ -54,4 +54,5 @@
     <string name="title_activity_edit_location">Hillforts</string>
     <string name="rate_hillfort">Rate Hillfort</string>
     <string name="rate_confirm">Confirm Rating</string>
+    <string name="search_hint">Search Hillforts</string>
 </resources>

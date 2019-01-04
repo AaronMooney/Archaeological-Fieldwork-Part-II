@@ -17,7 +17,8 @@ import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.HillfortModel
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
+
+
 
 interface HillfortListener {
     fun onHillfortClick(hillfort: HillfortModel)
