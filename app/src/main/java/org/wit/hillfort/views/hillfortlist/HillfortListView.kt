@@ -8,7 +8,9 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.*
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_hillfort_list.*
+import kotlinx.android.synthetic.main.card_hillfort.*
 import org.wit.hillfort.R
 import org.wit.hillfort.main.MainApp
 import org.wit.hillfort.models.HillfortModel
@@ -18,6 +20,12 @@ import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.intentFor
 import org.wit.hillfort.models.firebase.HillfortFireStore
 import org.wit.hillfort.views.login.LoginView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.annotation.NonNull
+
+
+
+
 
 class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigationItemSelectedListener{
 
@@ -25,6 +33,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
     lateinit var presenter: HillfortListPresenter
     lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
     lateinit var toggleDrawer: ActionBarDrawerToggle
+    var showFavorites = false
 
     var fireStore: HillfortFireStore? = null
 
@@ -35,6 +44,23 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
         supportActionBar?.setHomeAsUpIndicator(R.drawable.abc_ic_menu_overflow_material)
 
         app = application as MainApp
+
+        val bottomNavigationView = findViewById<View>(R.id.bottom_navigation) as BottomNavigationView
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+            object : BottomNavigationView.OnNavigationItemSelectedListener {
+                override
+                fun onNavigationItemSelected(item: MenuItem): Boolean {
+                    when (item.itemId) {
+                        R.id.item_add -> presenter.doAddHillfort()
+
+                        R.id.item_map -> presenter.doShowHillfortsMap()
+
+                        R.id.item_settings -> presenter.doShowSettings()
+                    }
+                    return true
+                }
+            })
 
         drawerLayout = findViewById(R.id.drawer)
         toggleDrawer = ActionBarDrawerToggle(this,drawerLayout, R.string.open, R.string.close)
@@ -54,15 +80,20 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
                 fireStore = app.hillforts as HillfortFireStore
                 if (app.hillforts.findAll().isEmpty()) {
                     fireStore?.initHillforts()
-                    presenter.loadHillforts()
+                    presenter.loadHillforts(showFavorites)
                 }
             }
         }
-        presenter.loadHillforts()
+        presenter.loadHillforts(showFavorites)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        if (!showFavorites) {
+            menu?.getItem(0)?.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_off))
+        } else {
+            menu?.getItem(0)?.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_on))
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -75,6 +106,17 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
             R.id.item_logout -> presenter.doLogout()
 
             R.id.item_settings -> presenter.doShowSettings()
+
+            R.id.item_favorites -> {
+                    if (!showFavorites) {
+                        item.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_on))
+                        showFavorites = true
+                    } else {
+                        item.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_off))
+                        showFavorites = false
+                    }
+                presenter.loadHillforts(showFavorites)
+            }
         }
         if (toggleDrawer.onOptionsItemSelected(item)){
             return true
@@ -98,7 +140,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        presenter.loadHillforts()
+        presenter.loadHillforts(showFavorites)
         super.onActivityResult(requestCode, resultCode, data)
     }
 

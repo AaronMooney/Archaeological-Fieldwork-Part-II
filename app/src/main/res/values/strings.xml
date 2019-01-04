@@ -20,6 +20,9 @@
     <string name="menu_logout">Logout</string>
     <string name="menu_saveHillfort">Save</string>
     <string name="menu_showMap">Show Map</string>
+    <string name="menu_favorite">Favorite</string>
+    <string name="menu_favorites">View Favorites</string>
+    <string name="menu_showList">Show List</string>
     <string name="enter_hillfort_Name">Please enter a Hillfort Name</string>
     <string name="save_hillfort">Save Hillfort</string>
     <string name="select_hillfort_image">Select hillfort image</string>

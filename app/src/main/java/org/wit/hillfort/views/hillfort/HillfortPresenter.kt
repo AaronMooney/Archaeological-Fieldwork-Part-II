@@ -58,11 +58,12 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
         }
     }
 
-    fun doAddOrSave(name: String, description: String, notes: String, rating: Float) {
+    fun doAddOrSave(name: String, description: String, notes: String, rating: Float, favorite: Boolean) {
         hillfort.name = name
         hillfort.description = description
         hillfort.notes = notes
         hillfort.rating = rating
+        hillfort.favorite = favorite
         async(UI) {
             if (edit) {
                 app.hillforts.update(hillfort)
