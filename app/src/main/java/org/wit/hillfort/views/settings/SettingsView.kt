@@ -15,12 +15,14 @@ import org.wit.hillfort.helpers.hashString
 import org.wit.hillfort.main.MainApp
 import android.widget.EditText
 import android.widget.TextView
+import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.contentView
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import org.wit.hillfort.views.BaseView
 
 
-class SettingsView: AppCompatActivity(), AnkoLogger {
+class SettingsView: BaseView(), AnkoLogger {
     lateinit var app: MainApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,9 +31,10 @@ class SettingsView: AppCompatActivity(), AnkoLogger {
 
         app = application as MainApp
 
-        toolBarSettings.title = title
-        setSupportActionBar(toolBarSettings)
+        init(toolBarSettings, true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val user = FirebaseAuth.getInstance().currentUser
 
         val currentUserName :TextView = findViewById(R.id.currentUser)
         val currentUserEmail: TextView = findViewById(R.id.currentUserEmail)
@@ -43,6 +46,9 @@ class SettingsView: AppCompatActivity(), AnkoLogger {
 //        val totalHillfortsText = java.lang.String.format(resources.getString(R.string.total_hillforts), app.currentUser.hillforts.size.toString())
 //        val numHillfortsVisitedText = java.lang.String.format(resources.getString(R.string.number_visited), app.currentUser.numVisited.toString())
 
+        if (user != null) {
+            currentUserName.text = java.lang.String.format(resources.getString(R.string.current_user), "${user.email}")
+        }
 //        currentUserName.text = userName.replace("%","")
 //        currentUserEmail.text = userEmail.replace("%", "")
 //        totalHillforts.text = totalHillfortsText.replace("%", "")
