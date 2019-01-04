@@ -10,6 +10,7 @@ import org.wit.hillfort.models.room.HillfortStoreRoom
 class MainApp : Application(), AnkoLogger {
 
     lateinit var hillforts: HillfortStore
+    var numHillforts = 0
 
     override fun onCreate() {
         super.onCreate()

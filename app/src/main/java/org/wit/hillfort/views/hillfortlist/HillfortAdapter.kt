@@ -63,13 +63,11 @@ class HillfortAdapter constructor(private var hillforts: List<HillfortModel>,
                 async(UI) {
                     if (checkBox.isChecked) {
                         hillfort.visited = true
-//                        app.currentUser.numVisited++
                         val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                         hillfort.dateVisited = date
                         app.hillforts.update(hillfort)
                     } else {
                         hillfort.visited = false
-//                        app.currentUser.numVisited--
                         hillfort.dateVisited = ""
                         app.hillforts.update(hillfort)
                     }

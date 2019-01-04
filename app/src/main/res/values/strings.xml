@@ -44,7 +44,6 @@
     <string name="current_user" formatted="true">Current User: %1$s%%</string>
     <string name="current_user_email" formatted="true">Email: %1$s%%</string>
     <string name="total_hillforts" formatted="true">Total Hillforts: %1$s%%</string>
-    <string name="number_visited" formatted="true">Number of Hillforts visited: %1$s%%</string>
     <string name="date_visited" formatted="true">Last Visited: %1$s%%</string>
     <string name="open">Open</string>
     <string name="close">Close</string>

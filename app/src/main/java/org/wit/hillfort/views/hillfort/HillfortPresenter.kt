@@ -82,6 +82,7 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
                 app.hillforts.update(hillfort)
             } else {
                 app.hillforts.create(hillfort)
+                app.numHillforts++
             }
             view?.finish()
         }
@@ -94,6 +95,7 @@ class HillfortPresenter(view: BaseView) : BasePresenter(view){
     fun doDelete() {
         async(UI) {
             app.hillforts.delete(hillfort)
+            app.numHillforts --
             view?.finish()
         }
     }

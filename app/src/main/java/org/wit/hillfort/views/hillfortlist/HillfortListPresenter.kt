@@ -18,6 +18,7 @@ class HillfortListPresenter(view: BaseView) : BasePresenter(view) {
     fun loadHillforts(showFavorites: Boolean) {
         async(UI) {
             var hillforts = app.hillforts.findAll()
+            app.numHillforts = hillforts.size
             if (showFavorites){
                 favorites.clear()
                 hillforts.forEach {
