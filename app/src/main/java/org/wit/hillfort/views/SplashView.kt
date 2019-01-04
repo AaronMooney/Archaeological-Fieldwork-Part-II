@@ -1,13 +1,14 @@
-package org.wit.hillfort.activities
+package org.wit.hillfort.views
 
-import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import org.jetbrains.anko.intentFor
 import org.wit.hillfort.R
+import org.wit.hillfort.views.hillfortlist.HillfortListView
+import org.wit.hillfort.views.login.LoginView
 import java.lang.Exception
 
-class SplashActivity : AppCompatActivity() {
+class SplashView : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
@@ -18,7 +19,7 @@ class SplashActivity : AppCompatActivity() {
                 try {
                     Thread.sleep(5000)
 
-                    startActivityForResult(intentFor<UserWelcomeActivity>(),0)
+                    startActivityForResult(intentFor<LoginView>(),0)
                 } catch (e: Exception){
                     e.printStackTrace()
                 }

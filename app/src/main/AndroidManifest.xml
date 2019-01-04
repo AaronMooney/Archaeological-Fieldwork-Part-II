@@ -13,7 +13,8 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
-                android:name=".activities.SplashActivity"
+                android:name=".views.SplashView"
+                android:configChanges="keyboardHidden|orientation|screenSize"
                 android:noHistory="true"
                 android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
@@ -22,39 +23,65 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity
-                android:name=".activities.HillfortActivity"
-                android:parentActivityName=".activities.HillfortListActivity">
+                android:name=".views.hillfort.HillfortView"
+                android:label="@string/title_activity_hillfort"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:parentActivityName=".views.hillfortlist.HillfortListView">
+                <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".views.hillfortlist.HillfortListView" />
         </activity>
-        <activity android:name=".activities.HillfortListActivity">
+
+        <activity android:name=".views.hillfortlist.HillfortListView"
+                  android:label="@string/title_activity_hillfort_list"
+                  android:configChanges="keyboardHidden|orientation|screenSize"
+                  android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
         </activity>
+
+        <activity android:name=".views.login.LoginView"
+                  android:label="@string/title_activity_hillfort"
+                  android:configChanges="keyboardHidden|orientation|screenSize"
+                  android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+            </intent-filter>
+        </activity>
+
         <activity
-                android:name=".activities.ImageActivity"
-                android:parentActivityName=".activities.HillfortActivity">
+                android:name=".views.settings.SettingsView"
+                android:configChanges="keyboardHidden|orientation|screenSize">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".views.hillfort.HillfortView" />
         </activity>
-        <activity android:name=".activities.UserWelcomeActivity">
-        </activity>
-        <activity android:name=".activities.UserSignupActivity">
-        </activity>
+
         <activity
-                android:name=".activities.SettingsActivity"
-                android:parentActivityName=".activities.HillfortListActivity">
+                android:name=".views.editlocation.EditLocationView"
+                android:label="@string/title_activity_maps">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".views.hillfort.HillfortView" />
+        </activity>
+
+        <activity
+                android:name=".views.map.HillfortMapsView"
+                android:label="@string/title_activity_hillfort_maps"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:theme="@style/AppTheme"
+                android:launchMode="singleTop">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".views.hillfortlist.HillfortListView" />
         </activity>
 
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="@string/google_maps_key"/>
-
-        <activity
-                android:name=".activities.MapsActivity"
-                android:label="@string/title_activity_maps"
-                android:parentActivityName=".activities.HillfortActivity">
-        </activity>
-        <activity
-                android:name=".activities.HillfortMapsActivity"
-                android:label="@string/title_activity_hillfort_maps"
-                android:theme="@style/AppTheme">
-        </activity>
     </application>
 
 </manifest>

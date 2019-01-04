@@ -4,17 +4,17 @@ import android.app.Application
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.wit.hillfort.models.*
+import org.wit.hillfort.models.firebase.HillfortFireStore
+import org.wit.hillfort.models.room.HillfortStoreRoom
 
 class MainApp : Application(), AnkoLogger {
 
-    lateinit var users: UserStore
-    lateinit var currentUser: UserModel
-    var numHillfortsVisited: Int = 0
+    lateinit var hillforts: HillfortStore
 
     override fun onCreate() {
         super.onCreate()
 
-        users = UserJSONStore(applicationContext)
+        hillforts = HillfortFireStore(applicationContext)
         info("app started")
     }
 }
