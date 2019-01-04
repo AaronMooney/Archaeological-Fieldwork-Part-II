@@ -2,10 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+            android:id="@+id/action_search"
+            android:icon="@android:drawable/ic_menu_search"
+            app:showAsAction="always"
+            app:actionViewClass="android.widget.SearchView"
+            android:title="@string/search_hint"/>
+
     <item   android:id="@+id/item_favorites"
             android:icon="@android:drawable/star_big_on"
             android:title="@string/menu_favorites"
-            app:showAsAction="ifRoom"/>
+            app:showAsAction="always"/>
 
     <item   android:id="@+id/item_settings"
             android:icon="@android:drawable/ic_menu_preferences"

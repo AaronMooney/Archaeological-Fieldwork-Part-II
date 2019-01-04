@@ -21,13 +21,14 @@ import org.jetbrains.anko.intentFor
 import org.wit.hillfort.models.firebase.HillfortFireStore
 import org.wit.hillfort.views.login.LoginView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.annotation.NonNull
+import android.widget.SearchView
 
 
 
 
 
-class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigationItemSelectedListener{
+
+class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener{
 
     lateinit var app: MainApp
     lateinit var presenter: HillfortListPresenter
@@ -44,6 +45,7 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
         supportActionBar?.setHomeAsUpIndicator(R.drawable.abc_ic_menu_overflow_material)
 
         app = application as MainApp
+        showFavorites = false
 
         val bottomNavigationView = findViewById<View>(R.id.bottom_navigation) as BottomNavigationView
 
@@ -94,6 +96,14 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
         } else {
             menu?.getItem(0)?.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_on))
         }
+
+        val searchItem = menu?.findItem(R.id.action_search)
+
+        val searchView = searchItem?.getActionView() as SearchView
+        searchView.setOnQueryTextListener(this)
+        searchView.isIconified = true
+        searchView.setMaxWidth(700)
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -108,13 +118,13 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
             R.id.item_settings -> presenter.doShowSettings()
 
             R.id.item_favorites -> {
-                    if (!showFavorites) {
-                        item.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_on))
-                        showFavorites = true
-                    } else {
-                        item.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_off))
-                        showFavorites = false
-                    }
+                if (!showFavorites) {
+                    item.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_on))
+                    showFavorites = true
+                } else {
+                    item.setIcon(ContextCompat.getDrawable(this, android.R.drawable.star_big_off))
+                    showFavorites = false
+                }
                 presenter.loadHillforts(showFavorites)
             }
         }
@@ -160,5 +170,16 @@ class HillfortListView : BaseView(), HillfortListener, NavigationView.OnNavigati
         }
         super.onResume()
 
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        presenter.loadHillforts(showFavorites)
+        return false
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if (query!!.isBlank() || query.isEmpty()) presenter.loadHillforts(showFavorites)
+        else presenter.loadHillforts(showFavorites, query)
+        return false
     }
 }

@@ -31,6 +31,22 @@ class HillfortListPresenter(view: BaseView) : BasePresenter(view) {
         }
     }
 
+    fun loadHillforts(showFavorites: Boolean, query: String) {
+        async(UI) {
+            var hillforts = app.hillforts.findAll().filter{it.name.contains(query, ignoreCase = true) || it.description.contains(query, ignoreCase = true)}
+            if (showFavorites){
+                favorites.clear()
+                hillforts.forEach {
+                    if (it.favorite){
+                        favorites.add(it)
+                    }
+                }
+                hillforts = favorites
+            }
+            view?.showHillforts(hillforts)
+        }
+    }
+
     fun doAddHillfort() {
         view?.navigateTo(VIEW.HILLFORT)
     }
